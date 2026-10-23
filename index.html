@@ -32,12 +32,7 @@ body{background:#f5f8f6;color:#18312b;font:16px/1.4 -apple-system,BlinkMacSystem
 /* Landing */
 .landing-title{font-size:22px;font-weight:800;color:#0f4d36;margin:8px 0 8px;line-height:1.2;letter-spacing:-.4px}
 .landing-sub{font-size:13.5px;color:#53675c;line-height:1.5;margin:0 0 18px}
-.landing-btn{
-  background:white;border:1.5px solid #d7e2dc;border-radius:14px;
-  padding:16px;cursor:pointer;font:inherit;text-align:left;
-  display:flex;align-items:center;gap:14px;width:100%;margin-bottom:10px;
-  transition:all .15s;
-}
+.landing-btn{background:white;border:1.5px solid #d7e2dc;border-radius:14px;padding:16px;cursor:pointer;font:inherit;text-align:left;display:flex;align-items:center;gap:14px;width:100%;margin-bottom:10px;transition:all .15s}
 .landing-btn:hover{border-color:#1d6b4f;box-shadow:0 2px 8px rgba(29,107,79,.08)}
 .landing-btn.primary{background:linear-gradient(135deg,#0f4d36,#1d6b4f);color:white;border-color:#0f4d36}
 .landing-btn.primary:hover{box-shadow:0 4px 14px rgba(15,77,54,.25)}
@@ -51,12 +46,7 @@ body{background:#f5f8f6;color:#18312b;font:16px/1.4 -apple-system,BlinkMacSystem
 .q-title{font-size:20px;font-weight:800;color:#0f4d36;margin:0 0 6px;line-height:1.25;letter-spacing:-.3px}
 .q-sub{font-size:13px;color:#64756d;margin:0 0 18px;line-height:1.45}
 .answers{display:flex;flex-direction:column;gap:10px}
-.answer{
-  background:white;border:1.5px solid #d7e2dc;border-radius:12px;
-  padding:14px 16px;cursor:pointer;font:inherit;text-align:left;
-  display:flex;align-items:center;gap:12px;
-  transition:all .12s;width:100%;
-}
+.answer{background:white;border:1.5px solid #d7e2dc;border-radius:12px;padding:14px 16px;cursor:pointer;font:inherit;text-align:left;display:flex;align-items:center;gap:12px;transition:all .12s;width:100%}
 .answer:hover{border-color:#8fbda4;background:#fafdfb}
 .answer.selected{border-color:#1d6b4f;background:#e9f4ee;box-shadow:0 0 0 2px rgba(29,107,79,.1)}
 .answer .emoji{font-size:26px;flex-shrink:0;line-height:1}
@@ -414,7 +404,6 @@ const PRODUCTS = [
     why:'A green visual screen — instant privacy on a balcony or terrace, no maintenance, and it works where a fence can’t go into the ground.' }
 ];
 
-/* Cost models — placeholder values, replace with JustFence actual rates */
 const COST_MODELS = {
   'Anti Climb Mesh Fence': { postsPerFt:0.4, postCost:950, footingPerPost:650, meshPerSqFt:145, fittingsPerSqFt:28, labourPerSqFt:62,
     heightBands:[{upTo:1.8,mult:1.00},{upTo:2.1,mult:1.00},{upTo:2.4,mult:1.08},{upTo:3.0,mult:1.18}] },
@@ -500,26 +489,19 @@ const QUESTIONS = [
     ] }
 ];
 
-const BRAND = { name:'JustFence', phone:'8884411094', email:'info@justfence.in', website:'justfence.in', gstPct:18, validityDays:15, advanceText:'50% advance' };
+const BRAND = { name:'JustFence', phone:'8884411094', email:'info@justfence.in', website:'justfence.in', gstPct:18, validityDays:15 };
 const UNIT_LABEL = { running_ft:'running ft', sq_ft:'sq ft', nos:'nos', cubic_m:'m³' };
 const RATES_FINALISED = false;
 
-/* ============================================================
-   App state — screen navigator
-   ============================================================ */
 const app = {
-  screen: 'landing',      // 'landing' | 'recommender' | 'quoter'
-  reco: { step:0, answers:{} },
-  quote: {
-    product:null, lengthFt:0, heightM:1.5, volumeM3:0, quantity:0, areaSqFt:0,
-    site:'level', overrideRate:null
-  }
+  screen:'landing',
+  reco:{ step:0, answers:{} },
+  quote:{ product:null, lengthFt:0, heightM:1.5, volumeM3:0, quantity:0, areaSqFt:0, site:'level', overrideRate:null }
 };
 
 const $ = s => document.querySelector(s);
 const fmtINR = n => '₹' + Math.round(Number(n)||0).toLocaleString('en-IN');
 const getProduct = name => PRODUCTS.find(p => p.name === name);
-
 function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._tid); t._tid=setTimeout(()=>t.classList.remove('show'),2200); }
 function heightBandMult(model, h){ if(!model.heightBands) return 1; for(const b of model.heightBands){ if(h <= b.upTo) return b.mult; } return model.heightBands[model.heightBands.length-1].mult; }
 
@@ -530,10 +512,9 @@ function setScreen(name){
   app.screen = name;
   $('#progressWrap').classList.toggle('show', name==='recommender');
   $('#indicativeBadge').style.display = (name==='quoter' && !RATES_FINALISED) ? '' : 'none';
-  $('#hdrTitle').textContent = name==='recommender' ? 'Find Your Fence' : (name==='quoter' ? 'Quote on Site' : 'Quote on Site');
+  $('#hdrTitle').textContent = name==='recommender' ? 'Find Your Fence' : 'Quote on Site';
   render();
 }
-
 function render(){
   if(app.screen === 'landing') renderLanding();
   else if(app.screen === 'recommender') renderRecommender();
@@ -541,13 +522,12 @@ function render(){
 }
 
 /* ============================================================
-   LANDING SCREEN
+   LANDING
    ============================================================ */
 function renderLanding(){
   $('#body').innerHTML = `
     <h2 class="landing-title">How can I help?</h2>
     <p class="landing-sub">Two paths — pick the one that fits the conversation you're having.</p>
-
     <button class="landing-btn primary" onclick="startRecommender()">
       <span class="lb-icon">🧭</span>
       <span class="lb-body">
@@ -555,7 +535,6 @@ function renderLanding(){
         <span class="lb-desc">Four quick questions → a recommendation from the 20-product range, plus two alternates.</span>
       </span>
     </button>
-
     <button class="landing-btn" onclick="startQuoter(null)">
       <span class="lb-icon">📐</span>
       <span class="lb-body">
@@ -563,7 +542,6 @@ function renderLanding(){
         <span class="lb-desc">Go straight to the quoter — pick the product, enter dimensions, get a rate and total.</span>
       </span>
     </button>
-
     <div style="margin-top:20px;font-size:11.5px;color:#94a39a;line-height:1.6;text-align:center">
       The quote produced here is indicative. The formal quotation with GSTIN, quote number, and terms is issued by the office.
     </div>
@@ -575,37 +553,30 @@ function renderLanding(){
 /* ============================================================
    RECOMMENDER
    ============================================================ */
-function startRecommender(){
-  app.reco = { step:0, answers:{} };
-  setScreen('recommender');
-}
-
+function startRecommender(){ app.reco = { step:0, answers:{} }; setScreen('recommender'); }
 function scoreProduct(p, answers){
-  let score = 0;
-  if(p.tags.site.includes(answers.site)) score += 10;
-  if(p.tags.priority.includes(answers.priority)) score += 8;
-  if(p.tags.budget.includes(answers.budget)) score += 6;
-  if(answers.constraint === 'none') score += 2;
-  else if(p.tags.constraint.includes(answers.constraint)) score += 4;
-  if(p.tags.priority.includes(answers.priority) && p.tags.site.includes(answers.site)) score += 1;
-  return score;
+  let s = 0;
+  if(p.tags.site.includes(answers.site)) s += 10;
+  if(p.tags.priority.includes(answers.priority)) s += 8;
+  if(p.tags.budget.includes(answers.budget)) s += 6;
+  if(answers.constraint === 'none') s += 2;
+  else if(p.tags.constraint.includes(answers.constraint)) s += 4;
+  if(p.tags.priority.includes(answers.priority) && p.tags.site.includes(answers.site)) s += 1;
+  return s;
 }
 function getRecommendations(answers){
   const scored = PRODUCTS.map(p => ({ p, score: scoreProduct(p, answers) })).sort((a,b) => b.score - a.score);
   return { top: scored[0], alternates: scored.slice(1,4).filter(x => x.score >= 12) };
 }
-
 function renderRecommender(){
   updateProgress();
   if(app.reco.step < QUESTIONS.length) renderQuestion(app.reco.step);
   else renderRecommendations();
 }
-
 function updateProgress(){
   const pct = app.reco.step >= QUESTIONS.length ? 100 : (app.reco.step / QUESTIONS.length) * 100;
   $('#progressBar').style.width = pct + '%';
 }
-
 function renderQuestion(idx){
   const q = QUESTIONS[idx];
   const selected = app.reco.answers[q.key];
@@ -631,7 +602,6 @@ function renderQuestion(idx){
       setTimeout(() => { app.reco.step++; render(); }, 180);
     });
   });
-
   $('#actions').classList.remove('hidden');
   $('#actions').innerHTML = `
     ${idx > 0 ? '<button class="btn btn-back" onclick="recoBack()">← Back</button>' : '<button class="btn btn-back" onclick="setScreen(\'landing\')">← Home</button>'}
@@ -641,28 +611,21 @@ function renderQuestion(idx){
     if(app.reco.answers[q.key]){ app.reco.step++; render(); }
   };
 }
-
 function recoBack(){
   if(app.reco.step > 0){ app.reco.step--; render(); }
   else setScreen('landing');
 }
-
 function renderRecommendations(){
   const { top, alternates } = getRecommendations(app.reco.answers);
-  if(!top){
-    $('#body').innerHTML = '<p>No matching fence — try changing an answer.</p>';
-    return;
-  }
+  if(!top){ $('#body').innerHTML = '<p>No matching fence — try changing an answer.</p>'; return; }
   const p = top.p;
   const a = app.reco.answers;
   const siteLabel = QUESTIONS[0].answers.find(x => x.value === a.site)?.label || '';
   const priorityLabel = QUESTIONS[1].answers.find(x => x.value === a.priority)?.label || '';
   const budgetLabel = QUESTIONS[2].answers.find(x => x.value === a.budget)?.label || '';
   const constraintLabel = QUESTIONS[3].answers.find(x => x.value === a.constraint)?.label || '';
-
   $('#body').innerHTML = `
     <div class="summary-strip"><strong>You said:</strong> ${siteLabel} · ${priorityLabel} · ${budgetLabel} · ${constraintLabel}</div>
-
     <div class="reco-card">
       <div class="reco-head">
         <div class="r-tag">Best match</div>
@@ -682,7 +645,6 @@ function renderRecommendations(){
         </div>
       </div>
     </div>
-
     ${alternates.length ? `
       <div class="alt-title">Also consider</div>
       ${alternates.map(alt => `
@@ -695,10 +657,8 @@ function renderRecommendations(){
         </div>
       `).join('')}
     ` : ''}
-
     <div class="restart-link"><button onclick="setScreen('landing')">← Back to home</button></div>
   `;
-
   $('#actions').classList.remove('hidden');
   $('#actions').innerHTML = `
     <button class="btn btn-back" onclick="recoBack()">← Back</button>
@@ -710,21 +670,13 @@ function renderRecommendations(){
    QUOTER
    ============================================================ */
 function startQuoter(productName){
-  app.quote = {
-    product: productName || null,
-    lengthFt:0, heightM:1.5, volumeM3:0, quantity:0, areaSqFt:0,
-    site:'level', overrideRate:null
-  };
+  app.quote = { product: productName || null, lengthFt:0, heightM:1.5, volumeM3:0, quantity:0, areaSqFt:0, site:'level', overrideRate:null };
   setScreen('quoter');
 }
-
 function renderQuoter(){
   const q = app.quote;
   const p = q.product ? getProduct(q.product) : null;
-
   let html = '';
-
-  // Product card
   html += `<div class="card">
     <label class="lbl" for="product">Product</label>
     <select class="sel" id="product">
@@ -732,12 +684,10 @@ function renderQuoter(){
       ${groupedOptions(q.product)}
     </select>
   </div>`;
-
   if(!p){
     html += `<div class="empty"><div class="big">📐</div><div>Select a product to start.</div></div>`;
     $('#body').innerHTML = html;
     $('#actions').classList.add('hidden');
-    // Wire product select
     document.getElementById('product').addEventListener('change', e => {
       q.product = e.target.value || null;
       q.lengthFt=0; q.areaSqFt=0; q.volumeM3=0; q.quantity=0; q.overrideRate=null;
@@ -745,8 +695,6 @@ function renderQuoter(){
     });
     return;
   }
-
-  // Dimensions
   html += `<div class="card">`;
   if(p.unit === 'running_ft'){
     html += `<div class="row single"><div><label class="lbl" for="lenFt">Length (running ft)</label>
@@ -763,8 +711,6 @@ function renderQuoter(){
     html += `<div class="row single"><div><label class="lbl" for="qty">Quantity (nos)</label>
       <input class="inp" type="number" id="qty" inputmode="decimal" value="${q.quantity||''}" placeholder="10"></div></div>`;
   }
-
-  // Site condition
   html += `<div class="lbl" style="margin-top:12px">Site condition</div>
     <div class="seg" id="siteSeg">
       <button data-site="level" type="button" class="${q.site==='level'?'on':''}">Level</button>
@@ -772,13 +718,10 @@ function renderQuoter(){
       <button data-site="rocky" type="button" class="${q.site==='rocky'?'on':''}">Rocky</button>
       <button data-site="wall" type="button" class="${q.site==='wall'?'on':''}">Wall-mounted</button>
     </div>`;
-
-  // Rate block
   const derived = deriveRate();
   const isOverride = q.overrideRate !== null;
   const displayRate = isOverride ? q.overrideRate : (derived ? derived.rate : 0);
   const unitLabel = derived ? derived.unit : 'unit';
-
   html += `<div class="rate-block ${isOverride ? 'overridden' : ''}" id="rateBlock">
     <div class="rate-line">
       <div class="lhs">Rate per ${unitLabel}<strong id="rateMain">${fmtINR(displayRate)}</strong></div>
@@ -788,7 +731,6 @@ function renderQuoter(){
         ${isOverride ? '<button class="rate-btn reset" id="resetBtn" type="button">Reset</button>' : ''}
       </div>
     </div>
-
     <div class="override-editor" id="overrideEditor">
       <div class="oe-title">Override derived rate</div>
       <input type="number" id="overrideInput" inputmode="decimal" min="0" step="1" placeholder="Enter new rate in ₹">
@@ -798,13 +740,11 @@ function renderQuoter(){
         <button class="apply" id="overrideApply" type="button">Apply</button>
       </div>
     </div>
-
     <div class="buildup" id="buildup">
       <div class="buildup-title" id="buildupTitle">Rate build-up</div>
       <div id="buildupRows"></div>
     </div>
   </div>`;
-
   if(isOverride){
     html += `<div class="override-note open">
       <strong>⚠ Rate overridden</strong><br>
@@ -812,10 +752,7 @@ function renderQuoter(){
       All components scaled proportionally. Open <em>Build-up</em> to see the breakdown.
     </div>`;
   }
-
-  html += `</div>`; // close dimensions card
-
-  // Total card
+  html += `</div>`;
   const t = computeTotals();
   html += `<div class="total-card">
     <div class="area-line">${areaLine()}</div>
@@ -823,16 +760,12 @@ function renderQuoter(){
     <div class="line"><span>GST ${BRAND.gstPct}%</span><span>${fmtINR(t.gst)}</span></div>
     <div class="line total"><span>Total</span><span>${fmtINR(t.total)}</span></div>
   </div>`;
-
-  // Customer name
   html += `<div class="card">
     <label class="lbl" for="custName">Customer name <span style="font-weight:400;color:#94a39a">(optional)</span></label>
     <input class="inp" type="text" id="custName" placeholder="e.g. Mr. Sharma">
   </div>`;
-
   $('#body').innerHTML = html;
 
-  /* Wire everything */
   document.getElementById('product').addEventListener('change', e => {
     q.product = e.target.value || null;
     q.lengthFt=0; q.areaSqFt=0; q.volumeM3=0; q.quantity=0; q.overrideRate=null;
@@ -843,7 +776,7 @@ function renderQuoter(){
   if(lenEl) lenEl.oninput = () => {
     q.lengthFt = parseFloat(lenEl.value)||0;
     if(p.unit==='sq_ft') q.areaSqFt = Math.round(q.lengthFt * q.heightM * 10.7639);
-    render(); // re-render so rate/total update
+    render();
   };
   if(htEl) htEl.oninput = () => {
     q.heightM = parseFloat(htEl.value)||0;
@@ -852,14 +785,12 @@ function renderQuoter(){
   };
   if(volEl) volEl.oninput = () => { q.volumeM3 = parseFloat(volEl.value)||0; render(); };
   if(qtyEl) qtyEl.oninput = () => { q.quantity = parseFloat(qtyEl.value)||0; render(); };
-
   document.getElementById('siteSeg').addEventListener('click', e => {
     const btn = e.target.closest('button'); if(!btn) return;
     q.site = btn.dataset.site;
     if(q.overrideRate !== null){ q.overrideRate = null; toast('Site changed — override cleared'); }
     render();
   });
-
   document.getElementById('buildBtn').onclick = () => {
     const b = document.getElementById('buildup');
     if(b) b.classList.toggle('open');
@@ -874,10 +805,8 @@ function renderQuoter(){
   const resetBtn = document.getElementById('resetBtn');
   if(resetBtn) resetBtn.onclick = () => { q.overrideRate = null; render(); toast('Rate reset'); };
 
-  // Build-up rows
   renderBuildup();
 
-  // Actions
   $('#actions').classList.remove('hidden');
   const ready = t.qty > 0;
   $('#actions').innerHTML = `
@@ -891,7 +820,6 @@ function renderQuoter(){
   document.getElementById('waBtn').onclick = () => { if(currentQty()<=0) return toast('Enter dimensions first'); shareWhatsApp(); };
   document.getElementById('printBtn').onclick = () => { if(currentQty()<=0) return toast('Enter dimensions first'); buildPrintSheet(); setTimeout(()=>window.print(),100); };
 }
-
 function groupedOptions(selected){
   const groups = [
     { label:'Per running foot', unit:'running_ft' },
@@ -904,16 +832,14 @@ function groupedOptions(selected){
     const items = PRODUCTS.filter(p => p.unit === g.unit);
     if(!items.length) return;
     html += `<optgroup label="${g.label}">`;
-    items.forEach(p => {
-      html += `<option value="${p.name.replace(/"/g,'&quot;')}" ${p.name===selected?'selected':''}>${p.name}</option>`;
-    });
+    items.forEach(p => { html += `<option value="${p.name.replace(/"/g,'&quot;')}" ${p.name===selected?'selected':''}>${p.name}</option>`; });
     html += `</optgroup>`;
   });
   return html;
 }
 
 /* ============================================================
-   Rate calculation
+   RATE CALC
    ============================================================ */
 function deriveRate(){
   const q = app.quote;
@@ -922,7 +848,6 @@ function deriveRate(){
   const model = COST_MODELS[p.name];
   if(!model) return null;
   const site = SITE_MULT[q.site];
-
   if(model.linearOnly){
     const hm = heightBandMult(model, q.heightM);
     let rate, unit, buildup;
@@ -945,7 +870,6 @@ function deriveRate(){
     }
     return { rate, unit, buildup };
   }
-
   const hm = heightBandMult(model, q.heightM);
   const postsPerSqFt = model.postsPerFt / (q.heightM * 3.28084);
   const postCost = postsPerSqFt * model.postCost * hm;
@@ -962,7 +886,6 @@ function deriveRate(){
     { label:'Labour ('+site.label+' site)', value: labourCost }
   ]};
 }
-
 function currentQty(){
   const q = app.quote; if(!q.product) return 0;
   const p = getProduct(q.product);
@@ -1001,7 +924,6 @@ function areaLine(){
   }
   return currentQtyLabel();
 }
-
 function renderBuildup(){
   const derived = deriveRate();
   const rows = document.getElementById('buildupRows');
@@ -1021,7 +943,6 @@ function renderBuildup(){
   const total = derived.buildup.reduce((s,b) => s + (isOverride ? b.value*factor : b.value), 0);
   rows.innerHTML = finalRows + `<div class="buildup-row total"><span>Total per ${derived.unit}</span><span>₹${Math.round(total).toLocaleString('en-IN')}</span></div>`;
 }
-
 function openOverrideEditor(){
   const derived = deriveRate();
   if(!derived) return;
@@ -1033,7 +954,6 @@ function openOverrideEditor(){
     `Derived rate: <strong>${fmtINR(derived.rate)} / ${derived.unit}</strong><br>Enter a new rate — components will scale proportionally.`;
   input.focus(); input.select();
 }
-
 function applyOverride(){
   const derived = deriveRate(); if(!derived) return;
   const v = parseFloat(document.getElementById('overrideInput').value);
@@ -1044,13 +964,12 @@ function applyOverride(){
 }
 
 /* ============================================================
-   WhatsApp + Print
+   WhatsApp message — customer-facing (no override note, no advance term)
    ============================================================ */
 function buildMessage(){
   const q = app.quote;
   const p = getProduct(q.product);
   const t = computeTotals();
-  const derived = deriveRate();
   const cust = (document.getElementById('custName')?.value || '').trim();
   const L = [];
   L.push(`*JustFence Quotation*`);
@@ -1062,19 +981,21 @@ function buildMessage(){
   else if(p.unit==='cubic_m') L.push(`${q.volumeM3} m³`);
   else if(p.unit==='nos') L.push(`${q.quantity} nos`);
   L.push(`Rate: ₹${t.rate.toLocaleString('en-IN')} / ${UNIT_LABEL[p.unit]}`);
-  if(q.overrideRate !== null) L.push(`(Adjusted from standard ₹${derived.rate.toLocaleString('en-IN')} for site conditions)`);
   L.push('');
   L.push(`Subtotal: ${fmtINR(t.subtotal)}`);
   L.push(`GST ${BRAND.gstPct}%: ${fmtINR(t.gst)}`);
   L.push(`*Total: ${fmtINR(t.total)}*`);
   L.push('');
-  L.push(`Valid ${BRAND.validityDays} days. ${BRAND.advanceText}.`);
+  L.push(`Valid ${BRAND.validityDays} days.`);
   L.push(`Call ${BRAND.phone}`);
   L.push(BRAND.website);
   return L.join('\n');
 }
 function shareWhatsApp(){ window.open('https://wa.me/?text=' + encodeURIComponent(buildMessage()), '_blank'); }
 
+/* ============================================================
+   Print sheet — customer-facing (no override banner, no advance term)
+   ============================================================ */
 function buildPrintSheet(){
   const q = app.quote;
   const p = getProduct(q.product);
@@ -1090,18 +1011,12 @@ function buildPrintSheet(){
 
   const isOverride = q.overrideRate !== null;
   const factor = isOverride ? (q.overrideRate / derived.rate) : 1;
-  let buildupHtml = `<div class="ps-buildup"><div style="font-weight:800;margin-bottom:6px">Rate build-up per ${derived.unit}${isOverride?' (scaled ×'+factor.toFixed(3)+')':''}</div>`;
+  let buildupHtml = `<div class="ps-buildup"><div style="font-weight:800;margin-bottom:6px">Rate build-up per ${derived.unit}</div>`;
   derived.buildup.forEach(b => {
     const v = isOverride ? b.value * factor : b.value;
     buildupHtml += `<div class="pr"><span>${b.label}</span><span>₹${Math.round(v).toLocaleString('en-IN')}</span></div>`;
   });
   buildupHtml += `<div class="pr tot"><span>Total</span><span>₹${fmtINR(t.rate)}</span></div></div>`;
-
-  const overrideNote = isOverride
-    ? `<div style="background:#fdf6e8;border:1px solid #e8d4a8;border-radius:6px;padding:8px 10px;margin:10px 0;font-size:11px;color:#8a5a1c">
-         <strong>Rate adjusted for site conditions</strong><br>
-         Standard: ${fmtINR(derived.rate)} / ${derived.unit} · Quoted: ${fmtINR(q.overrideRate)} / ${derived.unit}
-       </div>` : '';
 
   document.getElementById('printSheet').innerHTML = `
     <div class="ps-head">
@@ -1119,10 +1034,9 @@ function buildPrintSheet(){
         <tr class="ps-total"><td colspan="3" class="r">TOTAL</td><td class="r">${fmtINR(t.total)}</td></tr>
       </tbody>
     </table>
-    ${overrideNote}
     ${buildupHtml}
     <div class="ps-foot">
-      ${BRAND.advanceText} with order. Valid ${BRAND.validityDays} days.<br>
+      Valid ${BRAND.validityDays} days.<br>
       Call ${BRAND.phone} · ${BRAND.email} · ${BRAND.website}<br>
       <span style="color:#94a39a;font-size:10px">Indicative quotation. Final scope and price confirmed after site verification.</span>
     </div>
