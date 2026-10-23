@@ -2,1565 +2,1157 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fence System Builder</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#1d6b4f">
+<title>JustFence — Quote on Site</title>
 <style>
-:root{--ink:#18312b;--green:#1d6b4f;--green2:#e9f4ee;--line:#d7e2dc;--bg:#f5f8f6;--muted:#64756d;--amber:#fff4d8;--red:#b23a2e;--redbg:#fdecea;--blue:#1c5d8c;--bluebg:#eaf3fa}
-*{box-sizing:border-box}
-html,body{margin:0;height:100%}
-body{background:var(--bg);color:var(--ink);font:13px/1.4 Arial,Helvetica,sans-serif;overflow:hidden}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;height:100%}
+body{background:#f5f8f6;color:#18312b;font:16px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;-webkit-text-size-adjust:100%}
+.app{max-width:480px;margin:0 auto;min-height:100%;background:#f5f8f6;display:flex;flex-direction:column}
 
-/* Top bar */
-header{background:linear-gradient(120deg,#143d30,#267555);color:white;padding:10px 16px;height:56px;display:flex;align-items:center;gap:16px}
-header h1{margin:0;font-size:20px;white-space:nowrap}
-header p{margin:0;font-size:12px;color:#dbece2;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* Header */
+.hdr{background:linear-gradient(120deg,#0f4d36,#1d6b4f);color:white;padding:14px 16px;display:flex;align-items:center;gap:10px}
+.hdr-logo{width:38px;height:38px;border-radius:9px;background:white;color:#1d6b4f;font-weight:900;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.hdr-txt{flex:1;min-width:0}
+.hdr-txt h1{margin:0;font-size:16px;font-weight:800;letter-spacing:-.2px}
+.hdr-txt p{margin:1px 0 0;font-size:11.5px;color:#dbece2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.indicative-badge{background:#fdf6e8;color:#8a5a1c;font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;border:1px solid #e8d4a8;white-space:nowrap}
+.hdr-help{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);color:white;font-weight:800;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:inherit}
+.hdr-help:hover{background:rgba(255,255,255,.3)}
 
-/* 3-column matrix */
-.grid{
-  display:grid;
-  grid-template-columns: 340px minmax(0,1fr) 360px;
-  gap:8px;
-  padding:8px;
-  height:calc(100vh - 56px);
+/* Progress bar */
+.progress{background:#0f4d36;height:3px;overflow:hidden;display:none}
+.progress.show{display:block}
+.progress-bar{height:100%;background:#7cbf8e;transition:width .3s ease}
+
+/* Body */
+.body{flex:1;padding:18px 16px 120px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+
+/* Landing */
+.landing-title{font-size:22px;font-weight:800;color:#0f4d36;margin:8px 0 8px;line-height:1.2;letter-spacing:-.4px}
+.landing-sub{font-size:13.5px;color:#53675c;line-height:1.5;margin:0 0 18px}
+.landing-btn{
+  background:white;border:1.5px solid #d7e2dc;border-radius:14px;
+  padding:16px;cursor:pointer;font:inherit;text-align:left;
+  display:flex;align-items:center;gap:14px;width:100%;margin-bottom:10px;
+  transition:all .15s;
 }
-.col{
-  background:white;
-  border:1px solid var(--line);
-  border-radius:10px;
-  overflow:auto;
-  display:flex;
-  flex-direction:column;
-  min-height:0;
+.landing-btn:hover{border-color:#1d6b4f;box-shadow:0 2px 8px rgba(29,107,79,.08)}
+.landing-btn.primary{background:linear-gradient(135deg,#0f4d36,#1d6b4f);color:white;border-color:#0f4d36}
+.landing-btn.primary:hover{box-shadow:0 4px 14px rgba(15,77,54,.25)}
+.landing-btn .lb-icon{font-size:30px;line-height:1;flex-shrink:0}
+.landing-btn .lb-body{flex:1;min-width:0}
+.landing-btn .lb-title{font-weight:800;font-size:15.5px;margin-bottom:3px;letter-spacing:-.1px}
+.landing-btn .lb-desc{font-size:12px;line-height:1.4;opacity:.85}
+
+/* Question card */
+.step-tag{display:inline-block;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:#1d6b4f;background:#e9f4ee;padding:4px 10px;border-radius:6px;margin-bottom:12px}
+.q-title{font-size:20px;font-weight:800;color:#0f4d36;margin:0 0 6px;line-height:1.25;letter-spacing:-.3px}
+.q-sub{font-size:13px;color:#64756d;margin:0 0 18px;line-height:1.45}
+.answers{display:flex;flex-direction:column;gap:10px}
+.answer{
+  background:white;border:1.5px solid #d7e2dc;border-radius:12px;
+  padding:14px 16px;cursor:pointer;font:inherit;text-align:left;
+  display:flex;align-items:center;gap:12px;
+  transition:all .12s;width:100%;
 }
-.col-header{
-  position:sticky;top:0;z-index:5;
-  background:#f0f6f2;
-  border-bottom:1px solid var(--line);
-  padding:8px 12px;
-  font-weight:700;font-size:12px;
-  text-transform:uppercase;letter-spacing:.04em;color:#1d6b4f;
-  display:flex;align-items:center;justify-content:space-between;gap:8px;
-}
-.col-body{padding:8px 10px;display:flex;flex-direction:column;gap:6px}
+.answer:hover{border-color:#8fbda4;background:#fafdfb}
+.answer.selected{border-color:#1d6b4f;background:#e9f4ee;box-shadow:0 0 0 2px rgba(29,107,79,.1)}
+.answer .emoji{font-size:26px;flex-shrink:0;line-height:1}
+.answer .a-body{flex:1;min-width:0}
+.answer .a-title{font-weight:700;font-size:14.5px;color:#18312b;display:block;line-height:1.3;margin-bottom:2px}
+.answer .a-desc{font-size:12px;color:#64756d;line-height:1.35}
 
-/* Compact form */
-.field{display:grid;grid-template-columns:1fr 1.4fr;align-items:center;gap:6px;font-size:12px}
-.field label{font-weight:700;color:#53675c;font-size:11px;line-height:1.2}
-.field select,.field input[type=number]{padding:5px 6px;font-size:12px;border-radius:6px}
-.field select:focus,.field input:focus{outline:2px solid #7ab99a;outline-offset:0}
+/* Recommendation card */
+.reco-card{background:white;border:1.5px solid #1d6b4f;border-radius:14px;overflow:hidden;margin-bottom:14px}
+.reco-head{background:linear-gradient(135deg,#0f4d36,#1d6b4f);color:white;padding:16px 18px}
+.reco-head .r-tag{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.25);padding:3px 9px;border-radius:20px;display:inline-block;margin-bottom:6px}
+.reco-head h2{margin:0;font-size:22px;font-weight:800;letter-spacing:-.3px}
+.reco-head p{margin:4px 0 0;font-size:12.5px;color:#c9dbd1;line-height:1.4}
+.reco-body{padding:16px 18px}
+.reco-body .why{background:#eef6f0;border:1px solid #cfe3d5;border-radius:9px;padding:11px 13px;margin-bottom:12px;font-size:12.5px;color:#28533d;line-height:1.5}
+.reco-body .why strong{color:#0f4d36}
+.reco-body .specs{font-size:12px;color:#53675c;line-height:1.6;margin-bottom:12px;padding:10px 0;border-top:1px dashed #d7e2dc;border-bottom:1px dashed #d7e2dc}
+.reco-body .specs strong{color:#18312b}
+.reco-actions{display:flex;gap:8px}
+.reco-actions button{flex:1;border:0;border-radius:9px;padding:12px;font:inherit;font-size:14px;font-weight:800;cursor:pointer}
+.reco-actions .quote{background:#1d6b4f;color:white}
+.reco-actions .compare{background:#edf3ef;color:#1d6b4f;border:1px solid #cfe3d5}
 
-/* Section headers inside inputs */
-.sec{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#1d6b4f;font-weight:700;margin:8px 0 2px;padding:4px 0;border-bottom:1px dashed var(--line);display:flex;justify-content:space-between;align-items:center}
-.sec:first-child{margin-top:0}
+/* Alternates */
+.alt-title{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:#53675c;margin:16px 0 10px}
+.alt-card{background:white;border:1px solid #d7e2dc;border-radius:10px;padding:12px 14px;margin-bottom:8px}
+.alt-card .alt-name{font-weight:700;font-size:14px;color:#18312b;margin-bottom:3px}
+.alt-card .alt-why{font-size:11.5px;color:#64756d;line-height:1.4;margin-bottom:8px}
+.alt-card .alt-actions{display:flex;gap:6px}
+.alt-card .alt-actions button{flex:1;border:0;border-radius:7px;padding:8px;font:inherit;font-size:12px;font-weight:700;cursor:pointer;background:#e9f4ee;color:#1d6b4f;border:1px solid #cfe3d5}
+.alt-card .alt-actions button.primary{background:#1d6b4f;color:white;border-color:#1d6b4f}
 
-/* Compact component blocks */
-.comp{border:1px solid var(--line);border-radius:8px;margin-bottom:6px;overflow:hidden}
-.comp-head{display:flex;align-items:center;gap:6px;padding:6px 8px;background:#fbfdfc;font-size:12px;cursor:pointer}
-.comp-head input{width:14px;height:14px;accent-color:var(--green);flex:0 0 auto;margin:0}
-.comp-title{font-weight:700;flex:1;font-size:12px}
-.tag{font-size:9px;text-transform:uppercase;letter-spacing:.04em;border-radius:20px;padding:2px 6px;background:#e8eee9;color:#405b4c;white-space:nowrap;font-weight:700}
-.tag.required{background:#dff1e6;color:#17623f}
-.comp-fields{padding:4px 6px 6px;display:flex;flex-direction:column;gap:4px}
-.comp-fields .field{grid-template-columns:1fr 1.2fr}
-.comp.filtered-out{display:none!important}
+/* Summary strip */
+.summary-strip{background:#f8fbf9;border:1px solid #e8efe9;border-radius:9px;padding:10px 12px;margin-bottom:16px;font-size:11.5px;color:#53675c;line-height:1.5}
+.summary-strip strong{color:#0f4d36}
 
-/* Estimate list */
-.est{list-style:none;margin:0;padding:0;font-size:11px}
-.est li{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px dotted #dfe8e3}
-.est strong{font-weight:700;color:#1d6b4f}
+/* Restart link */
+.restart-link{text-align:center;margin-top:16px}
+.restart-link button{background:transparent;border:0;color:#64756d;font:inherit;font-size:12.5px;cursor:pointer;text-decoration:underline;font-weight:600}
 
-/* Pricing summary (RHS) */
-.price-box{background:#173d30;color:white;border-radius:10px;padding:10px 12px;margin-bottom:8px}
-.price-box h3{margin:0 0 8px;font-size:13px;color:#dbece2;text-transform:uppercase;letter-spacing:.04em}
-.price-controls{display:flex;gap:8px;align-items:center;font-size:11px;margin-bottom:6px;flex-wrap:wrap}
-.price-controls label{color:#c9dbd1;font-weight:700}
-.price-controls input,.price-controls select{padding:3px 5px;font-size:11px;border-radius:5px;border:1px solid #3d6b58;background:#0e2e23;color:white}
-.price-controls input{width:56px;text-align:right}
-.price-row{display:flex;justify-content:space-between;padding:3px 0;font-size:12px;border-bottom:1px dotted #2f5a49}
-.price-row:last-child{border-bottom:0}
-.price-row.tier-detail{font-size:11px;color:#b9d3c5}
-.price-row.total{font-size:15px;font-weight:800;padding-top:6px;margin-top:4px;border-top:2px solid #3d6b58;border-bottom:0;color:#fff}
-.price-row .lbl{color:#c9dbd1}
-.price-row.total .lbl{color:#fff}
+/* ============ QUOTER STYLES ============ */
+.card{background:white;border:1px solid #d7e2dc;border-radius:12px;padding:14px;margin-bottom:12px}
+.lbl{display:block;font-size:12px;font-weight:700;color:#53675c;margin-bottom:6px;letter-spacing:.01em}
+.sel,.inp{width:100%;padding:12px 14px;border:1.5px solid #bdcec3;border-radius:9px;font:inherit;font-size:16px;background:white;color:#18312b;-webkit-appearance:none;appearance:none;min-width:0}
+.sel{background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2353675c' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:40px}
+.sel:focus,.inp:focus{outline:none;border-color:#1d6b4f;box-shadow:0 0 0 3px rgba(29,107,79,.15)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.row.single{grid-template-columns:1fr}
+.row:last-child{margin-bottom:0}
 
-/* Diagram */
-.diagram{border:1px solid var(--line);border-radius:8px;background:#fbfdfc;padding:4px;margin-bottom:8px}
-.diagram svg{display:block;width:100%;height:auto}
+.seg{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;background:#f0f4f1;border-radius:9px;padding:3px}
+.seg button{border:0;background:transparent;padding:8px 4px;border-radius:7px;font:inherit;font-size:11.5px;font-weight:700;color:#53675c;cursor:pointer}
+.seg button.on{background:white;color:#1d6b4f;box-shadow:0 1px 3px rgba(0,0,0,.08)}
 
-/* BOM matrix */
-.bom-toolbar{
-  display:flex;gap:6px;align-items:center;padding:6px 10px;
-  background:#fafcfa;border-bottom:1px solid var(--line);
-  font-size:11px;flex-wrap:wrap;
-}
-.bom-toolbar .badge{background:#dcefe2;color:#1d6b4f;padding:2px 7px;border-radius:20px;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.04em}
-.bom-toolbar .waste{display:flex;align-items:center;gap:4px}
-.bom-toolbar .waste input{width:46px;padding:3px 4px;font-size:11px;text-align:right;border-radius:5px}
+.rate-block{background:#f4faf6;border:1px solid #cfe3d5;border-radius:9px;padding:11px 12px;margin-top:10px}
+.rate-block.overridden{background:#fdf6e8;border-color:#e8d4a8}
+.rate-line{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.rate-line .lhs{font-size:12.5px;color:#28533d;font-weight:600;line-height:1.35;flex:1;min-width:0}
+.rate-block.overridden .rate-line .lhs{color:#8a5a1c}
+.rate-line .lhs strong{font-size:17px;font-weight:900;color:#0f4d36;display:block;margin-top:1px}
+.rate-block.overridden .rate-line .lhs strong{color:#6a5422}
+.rate-line .rhs{display:flex;gap:6px;flex-shrink:0}
+.rate-btn{background:#e9f4ee;border:1px solid #cfe3d5;color:#1d6b4f;padding:7px 10px;border-radius:7px;font-size:11.5px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap}
+.rate-btn.warn{background:#fdf6e8;border-color:#e8d4a8;color:#8a5a1c}
+.rate-btn.reset{background:#fdecea;border-color:#f2c9c3;color:#b23a2e}
 
-.tier{border-bottom:1px solid var(--line)}
-.tier:last-child{border-bottom:0}
-.tier-head{
-  padding:6px 10px;background:#eef4ee;
-  font-weight:700;font-size:11px;
-  display:flex;justify-content:space-between;align-items:center;
-  position:sticky;top:0;z-index:4;
-  border-bottom:1px solid var(--line);
-}
-.tier-head .tier-label{color:#1d6b4f;text-transform:uppercase;letter-spacing:.04em}
-.tier-head .tier-total{color:#18312b;font-weight:700;font-variant-numeric:tabular-nums}
-.tier-head.t3{background:#eaf3fa}
-.tier-head.t3 .tier-label{color:#1c5d8c}
-.tier-head.t4{background:#fdf6e8}
-.tier-head.t4 .tier-label{color:#7a5a1c}
-.tier-head.t5{background:#f4f4f4}
-.tier-head.t5 .tier-label{color:#555}
+.override-editor{background:white;border:1.5px solid #e8d4a8;border-radius:9px;padding:12px;margin-top:10px;display:none}
+.override-editor.open{display:block}
+.override-editor .oe-title{font-size:12px;font-weight:800;color:#8a5a1c;margin-bottom:8px}
+.override-editor input{width:100%;padding:10px 12px;border:1.5px solid #d4c08a;border-radius:7px;font:inherit;font-size:16px;font-weight:700;color:#18312b;margin-bottom:8px;text-align:right}
+.override-editor input:focus{outline:none;border-color:#8a5a1c;box-shadow:0 0 0 3px rgba(232,212,168,.4)}
+.override-editor .oe-hint{font-size:11px;color:#8a7a4a;margin-bottom:8px;line-height:1.4}
+.override-editor .oe-actions{display:flex;gap:6px}
+.override-editor .oe-actions button{flex:1;padding:9px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;border:0}
+.override-editor .oe-actions .apply{background:#8a5a1c;color:white}
+.override-editor .oe-actions .cancel{background:#f0f4f1;color:#53675c}
 
-.matrix{width:100%;border-collapse:collapse;font-size:11.5px}
-.matrix th{
-  text-align:left;padding:4px 6px;
-  background:#f5f9f6;color:#405b4c;
-  font-size:10px;text-transform:uppercase;letter-spacing:.04em;
-  border-bottom:1px solid var(--line);
-  position:sticky;top:24px;z-index:3;
-}
-.matrix td{padding:4px 6px;border-bottom:1px solid #eef1ee;vertical-align:middle}
-.matrix tr.cat td{background:#fafcfa;font-weight:700;color:#1d6b4f;font-size:10px;text-transform:uppercase;letter-spacing:.04em;padding:3px 6px}
-.matrix td.num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
-.matrix td.item{font-weight:600}
-.matrix td.spec{color:#566a60;font-size:10.5px}
-.matrix input.rate{
-  width:64px;padding:3px 4px;font-size:11px;text-align:right;border-radius:5px;
-}
-.matrix .range{display:block;font-size:9px;color:#94a39a;text-align:right;margin-top:1px}
-.matrix .total{font-weight:700;color:#1d6b4f;font-variant-numeric:tabular-nums;white-space:nowrap}
-.matrix .overridden{background:#fff8e0}
+.buildup{margin-top:10px;border-top:1px dashed #cfe3d5;padding-top:8px;display:none}
+.rate-block.overridden .buildup{border-top-color:#e8d4a8}
+.buildup.open{display:block}
+.buildup-title{font-size:11px;font-weight:700;color:#28533d;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.rate-block.overridden .buildup-title{color:#8a5a1c}
+.buildup-row{display:flex;justify-content:space-between;font-size:12px;color:#53675c;padding:3px 0;font-variant-numeric:tabular-nums;gap:8px}
+.buildup-row .b-label{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.buildup-row .b-val{font-weight:600;color:#18312b;flex-shrink:0}
+.buildup-row.total{border-top:1px solid #cfe3d5;margin-top:4px;padding-top:6px;font-weight:800;color:#0f4d36}
+.rate-block.overridden .buildup-row.total{border-top-color:#e8d4a8;color:#6a5422}
+.buildup-row .b-mult{font-size:10px;color:#8a5a1c;margin-left:4px;font-weight:700}
+.override-note{margin-top:8px;padding:9px 11px;background:#fdf6e8;border:1px solid #e8d4a8;border-radius:7px;font-size:11.5px;color:#8a5a1c;line-height:1.4;display:none}
+.override-note.open{display:block}
+.override-note strong{color:#6a5422}
 
-.empty{color:var(--muted);font-style:italic;padding:8px 10px;font-size:11px}
+.total-card{background:linear-gradient(135deg,#0f4d36,#1d6b4f);color:white;border-radius:12px;padding:16px;margin-bottom:12px}
+.total-card .line{display:flex;justify-content:space-between;font-size:13px;color:#c9dbd1;padding:4px 0;font-variant-numeric:tabular-nums}
+.total-card .line.total{font-size:22px;font-weight:900;color:white;padding-top:10px;margin-top:6px;border-top:1.5px solid rgba(255,255,255,.25);letter-spacing:-.3px}
+.total-card .line.total span:last-child{font-variant-numeric:tabular-nums}
+.total-card .area-line{font-size:12px;color:#9fc2b1;padding-bottom:8px;margin-bottom:4px;border-bottom:1px dashed rgba(255,255,255,.2)}
 
-/* Warnings */
-.warn-box{background:var(--redbg);border:1px solid #f2c9c3;padding:8px 10px;border-radius:8px;font-size:11px;color:var(--red);margin-bottom:8px}
-.warn-box strong{display:block;margin-bottom:4px;font-size:11px}
-.warn-box ul{margin:0;padding-left:16px}
-.warn-box li{margin:2px 0}
+.empty{text-align:center;color:#94a39a;font-size:13px;padding:30px 20px;line-height:1.6}
+.empty .big{font-size:36px;margin-bottom:8px;opacity:.4}
 
-/* Notes */
-.note{background:var(--amber);border:1px solid #f0dfaa;padding:8px 10px;border-radius:8px;font-size:11px;color:#6a5422;margin-bottom:8px}
-.exclusions{background:#f8f8f6;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:11px;color:#566a60;line-height:1.5;margin-bottom:8px}
-.exclusions strong{color:var(--ink)}
+/* Bottom actions */
+.actions{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid #d7e2dc;padding:10px 16px 14px;display:flex;gap:8px;max-width:480px;margin:0 auto;box-shadow:0 -4px 16px rgba(15,45,32,.06);z-index:50}
+.actions.hidden{display:none}
+.btn{flex:1;border:0;border-radius:10px;padding:14px 12px;font:inherit;font-size:15px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;letter-spacing:.01em}
+.btn-wa{background:#25D366;color:white}
+.btn-wa:disabled{background:#c8d4cc;color:#f5f8f6;cursor:not-allowed}
+.btn-print{background:#edf3ef;color:#1d6b4f;border:1px solid #cfe3d5;flex:0 0 auto;min-width:90px}
+.btn-print:disabled{opacity:.5;cursor:not-allowed}
+.btn-back{background:#edf3ef;color:#1d6b4f;border:1px solid #cfe3d5;flex:0 0 auto;min-width:80px}
+.btn-next{background:#1d6b4f;color:white}
+.btn-next:disabled{background:#c8d4cc;color:#f5f8f6;cursor:not-allowed}
+.btn-restart{background:#1d6b4f;color:white}
 
-/* Buttons */
-.buttons{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
-button{border:0;border-radius:7px;padding:7px 10px;font-weight:700;cursor:pointer;font-size:11.5px}
-.primary{background:var(--green);color:white}
-.secondary{background:#edf3ef;color:var(--ink);border:1px solid var(--line)}
-.small{font-size:10px;padding:4px 7px}
+/* Toast */
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#18312b;color:white;padding:10px 18px;border-radius:20px;font-size:13px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s;z-index:200;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis}
+.toast.show{opacity:1}
 
-#jsonOut{white-space:pre-wrap;overflow-wrap:anywhere;background:#f5f7f5;border:1px solid var(--line);border-radius:8px;padding:6px;font-size:10px;display:none;max-height:200px;overflow:auto;margin-top:6px}
-
-.footer-note{color:var(--muted);font-size:10.5px;margin-top:6px}
-
-.override-note{font-size:10.5px;color:#b9d3c5;margin-top:6px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.override-note button{background:#2f5a49;color:white;padding:3px 7px;font-size:10px;border-radius:5px}
-
-/* Print */
+/* Print sheet */
+.print-sheet{display:none}
 @media print{
-  body{overflow:visible}
-  html,body{height:auto}
-  .grid{display:block;height:auto;padding:0;gap:0}
-  .col{border:0;border-radius:0;overflow:visible;display:block;height:auto;margin-bottom:12px}
-  .col-header{position:static;background:#eee}
-  header{padding:10px 16px;height:auto;display:block}
-  header h1{font-size:16px}
-  header p{display:none}
-  .buttons,.footer-note{display:none!important}
-  .price-box{background:#f4f4f4;color:#111}
-  .price-box h3,.price-row .lbl,.price-controls label{color:#111}
-  .price-controls input,.price-controls select{background:white;color:#111;border:1px solid #ccc}
-  .price-row,.price-controls{border-color:#ccc}
-  .price-row.total{color:#111}
-  .price-row.total .lbl{color:#111}
-  .matrix th,.tier-head{position:static}
-  .diagram{break-inside:avoid}
+  .app,.actions,.toast{display:none!important}
+  body{background:white}
+  .print-sheet{display:block;padding:20px;font-family:Arial,sans-serif;color:#18312b}
+  .print-sheet .ps-head{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:14px;border-bottom:2px solid #1d6b4f;margin-bottom:14px}
+  .print-sheet .ps-logo{font-size:20px;font-weight:900;color:#1d6b4f}
+  .print-sheet .ps-tag{font-size:11px;color:#64756d;margin-top:2px}
+  .print-sheet .ps-meta{text-align:right;font-size:11px;color:#64756d;line-height:1.5}
+  .print-sheet .ps-cust{font-size:13px;margin-bottom:14px;line-height:1.7}
+  .print-sheet table{width:100%;border-collapse:collapse;font-size:13px}
+  .print-sheet th{text-align:left;padding:8px 6px;border-bottom:1px solid #d7e2dc;font-size:10px;text-transform:uppercase;color:#64756d}
+  .print-sheet th.r,.print-sheet td.r{text-align:right}
+  .print-sheet td{padding:8px 6px;border-bottom:1px solid #eef1ee}
+  .print-sheet .ps-total{font-size:18px;font-weight:900;color:#0f4d36;border-top:2px solid #1d6b4f;padding-top:10px}
+  .print-sheet .ps-foot{margin-top:20px;font-size:11px;color:#64756d;line-height:1.7;padding-top:12px;border-top:1px dashed #d7e2dc}
+  .print-sheet .ps-buildup{font-size:11px;color:#53675c;margin:10px 0;padding:10px;background:#f8fbf9;border:1px solid #d7e2dc;border-radius:6px}
+  .print-sheet .ps-buildup .pr{display:flex;justify-content:space-between;padding:2px 0;font-variant-numeric:tabular-nums}
+  .print-sheet .ps-buildup .pr.tot{font-weight:800;border-top:1px solid #d7e2dc;margin-top:4px;padding-top:4px;color:#0f4d36}
 }
 
-/* Responsive: on narrow screens, stack */
-@media(max-width:1100px){
-  .grid{grid-template-columns: 300px minmax(0,1fr) 320px}
-}
-@media(max-width:900px){
-  body{overflow:auto}
-  .grid{grid-template-columns:1fr;height:auto}
-  .col{overflow:visible;height:auto}
+/* Intro modal */
+.modal-bg{position:fixed;inset:0;background:rgba(15,45,32,.72);display:none;align-items:center;justify-content:center;padding:16px;z-index:300;-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+.modal-bg.open{display:flex}
+.modal{background:white;border-radius:16px;max-width:600px;width:100%;max-height:92vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.4);animation:modalIn .22s ease-out}
+@keyframes modalIn{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+.modal-head{background:linear-gradient(120deg,#0f4d36,#1d6b4f);color:white;padding:18px 20px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;border-radius:16px 16px 0 0}
+.modal-head h2{margin:0;font-size:22px;font-weight:800;letter-spacing:-.3px}
+.modal-head p{margin:4px 0 0;font-size:12.5px;color:#c9dbd1;line-height:1.4}
+.mh-badge{display:inline-block;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.25);padding:3px 9px;border-radius:20px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.mh-close{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.25);color:white;width:32px;height:32px;border-radius:50%;font-size:16px;font-weight:700;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:inherit}
+.mh-close:hover{background:rgba(255,255,255,.3)}
+.modal-body{padding:18px 20px;overflow-y:auto;-webkit-overflow-scrolling:touch;flex:1}
+.intro-section{margin-bottom:20px}
+.intro-section:last-child{margin-bottom:0}
+.intro-tag{display:inline-block;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:#53675c;background:#f0f4f1;padding:4px 10px;border-radius:6px;margin-bottom:10px}
+.intro-tag-green{background:#e9f4ee;color:#1d6b4f}
+.intro-tag-amber{background:#fdf6e8;color:#8a5a1c}
+.intro-section p{margin:0 0 10px;font-size:13.5px;line-height:1.55;color:#2c443c}
+.intro-section p:last-child{margin-bottom:0}
+.intro-section strong{color:#0f4d36}
+.intro-list{margin:0;padding:0;list-style:none;font-size:13px;line-height:1.5}
+.intro-list li{position:relative;padding:7px 0 7px 24px;border-bottom:1px solid #eef1ee;color:#2c443c}
+.intro-list li:last-child{border-bottom:0}
+.intro-list li::before{content:"✓";position:absolute;left:4px;top:7px;color:#1d6b4f;font-weight:900;font-size:13px}
+.intro-list-amber li::before{content:"·";color:#8a5a1c;font-size:20px;top:2px}
+.intro-list strong{color:#0f4d36}
+.steps{display:flex;flex-direction:column;gap:8px}
+.step{display:flex;gap:12px;align-items:flex-start;background:#fafcfa;border:1px solid #e8efe9;border-radius:10px;padding:10px 12px}
+.step-num{width:26px;height:26px;border-radius:50%;background:#1d6b4f;color:white;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;margin-top:1px}
+.step-body{font-size:12.5px;line-height:1.5;color:#2c443c}
+.step-body strong{color:#0f4d36;font-weight:700}
+.intro-why{background:#eef6f0;border:1px solid #cfe3d5;border-radius:10px;padding:14px 16px}
+.intro-why p{color:#28533d}
+.intro-why strong{color:#0f4d36}
+.intro-urgent{background:#fdf6e8;border:1px solid #e8d4a8;border-radius:10px;padding:14px 16px}
+.intro-urgent p{color:#6a5422}
+.intro-urgent strong{color:#4a3a1a}
+.modal-foot{padding:14px 20px 16px;border-top:1px solid #eef1ee;background:#fafcfa;display:flex;justify-content:space-between;align-items:center;gap:12px;border-radius:0 0 16px 16px;flex-wrap:wrap}
+.mf-hint{font-size:11.5px;color:#94a39a;line-height:1.4;flex:1;min-width:0}
+.mf-hint strong{color:#53675c}
+.mf-btn{background:#1d6b4f;color:white;border:0;padding:12px 20px;border-radius:10px;font:inherit;font-size:14px;font-weight:800;cursor:pointer;white-space:nowrap;box-shadow:0 2px 8px rgba(29,107,79,.25)}
+.mf-btn:hover{background:#0f4d36}
+@media (max-width:480px){
+  .modal-head{padding:16px 16px}
+  .modal-head h2{font-size:19px}
+  .modal-body{padding:14px 16px}
+  .modal-foot{padding:12px 16px 14px}
+  .mf-btn{width:100%}
+  .mf-hint{text-align:center;width:100%}
+  .intro-section p{font-size:13px}
+  .intro-list{font-size:12.5px}
+  .step-body{font-size:12px}
 }
 </style>
 </head>
 <body>
 
-<header>
-  <h1>Fence System Builder</h1>
-  <p>Inputs (left) · BOM matrix with editable rates (centre) · Computed outputs, pricing, tax &amp; grand total (right). Concept/design configurator — not a structural engineering approval.</p>
-</header>
-
-<div class="grid">
-
-  <!-- LEFT COLUMN: INPUTS -->
-  <section class="col" id="colInputs">
-    <div class="col-header">Inputs <span style="font-size:10px;color:#64756d;text-transform:none;letter-spacing:0">configure system</span></div>
-    <div class="col-body">
-
-      <div class="sec">1 · System</div>
-      <div class="field"><label for="purpose">Purpose</label><select id="purpose"><option>Plot boundary / demarcation</option><option>Farm and plantation protection</option><option>Livestock control</option><option>Garden / landscape</option><option>Security perimeter</option><option>Nursery protection</option></select></div>
-      <div class="field"><label for="style">Fence type</label><select id="style"><option value="Chain-link mesh">Chain-link mesh</option><option value="Welded wire mesh">Welded wire mesh</option><option value="Plain-wire fence">Plain-wire fence</option><option value="Barbed-wire fence">Barbed-wire fence</option><option value="Rail fence">Rail fence</option><option value="Electric fence">Electric fence</option><option value="Live hedge / biological fence">Live hedge / biological fence</option><option value="Hybrid / mixed system">Hybrid / mixed system</option></select></div>
-      <div class="field"><label for="height">Height</label><select id="height"><option>0.9 m</option><option>1.2 m</option><option selected>1.5 m</option><option>1.8 m</option><option>2.1 m</option><option>2.4 m</option></select></div>
-      <div class="field"><label for="runLength">Run length (m)</label><input type="number" id="runLength" min="1" step="1" value="30"></div>
-      <div class="field"><label for="terrain">Ground</label><select id="terrain"><option>Level ground</option><option>Uneven / sloping ground</option><option>Rocky ground</option><option>Soft / waterlogged ground</option><option>Mixed conditions</option></select></div>
-      <div class="field"><label for="environment">Exposure</label><select id="environment"><option>Normal inland</option><option>High rainfall / wet</option><option>Coastal / corrosive</option><option>High wind exposure</option><option>Dusty / industrial</option></select></div>
-      <div class="field"><label for="finish">Coating</label><select id="finish"><option>Hot-dip galvanized</option><option>Pre-galvanized</option><option>Powder coated</option><option>Painted</option><option>Stainless steel</option><option>Weathering / untreated (where suitable)</option><option>Not yet decided</option></select></div>
-      <div class="field"><label for="civilToggle">Civil works</label><select id="civilToggle"><option value="no">No — fence only</option><option value="yes">Yes — incl. earthworks</option></select></div>
-
-      <div class="sec">2 · Essential</div>
-      <div class="context-note" id="filterNote" style="font-size:10.5px;background:#eef6f0;border:1px solid #cfe3d5;padding:5px 7px;border-radius:6px;color:#28533d;line-height:1.35">Choose a fence type to filter components.</div>
-
-      <div class="comp" data-comp="barrier">
-        <div class="comp-head"><input type="checkbox" checked disabled aria-label="Required"><span class="comp-title">A. Barrier / infill</span><span class="tag required">Req.</span></div>
-        <div class="comp-fields">
-          <div class="field"><label>Material</label><select data-field="Material"><option>Galvanized steel wire mesh</option><option>PVC-coated steel mesh</option><option>Welded galvanized mesh</option><option>Plain galvanized wire</option><option>Barbed galvanized wire</option><option>Timber rails</option><option>Living hedge / plants</option><option>Mixed / hybrid</option></select></div>
-          <div class="field"><label>Specification</label><select data-field="Specification"><option>Standard / to be sized</option><option>Mesh aperture 50 × 50 mm</option><option>Mesh aperture 75 × 75 mm</option><option>Mesh aperture 100 × 100 mm</option><option>3 horizontal wire strands</option><option>4 horizontal wire strands</option><option>5 horizontal wire strands</option><option>6 horizontal wire strands</option><option>Rails / panels — dimensions to be specified</option></select></div>
-        </div>
+<!-- ============ INTRO MODAL ============ -->
+<div class="modal-bg" id="introModal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="introTitle">
+    <div class="modal-head">
+      <div>
+        <div class="mh-badge">For JustFence sales team</div>
+        <h2 id="introTitle">Quote on Site</h2>
+        <p>Find the right fence. Give a defensible price. In 90 seconds.</p>
       </div>
-
-      <div class="comp" data-comp="posts">
-        <div class="comp-head"><input type="checkbox" checked disabled aria-label="Required"><span class="comp-title">B. Line posts</span><span class="tag required">Req.</span></div>
-        <div class="comp-fields">
-          <div class="field"><label>Material</label><select data-field="Material"><option>Galvanized steel</option><option>Pre-galvanized steel</option><option>Reinforced concrete</option><option>Timber (treated)</option><option>Recycled plastic / composite</option><option>Masonry / concrete piers</option></select></div>
-          <div class="field"><label>Spacing</label><select data-field="Spacing"><option>2.0 m</option><option selected>2.5 m</option><option>3.0 m</option><option>3.5 m</option><option>4.0 m</option><option>Design-dependent / engineer to specify</option></select></div>
-          <div class="field"><label>Profile</label><select data-field="Profile"><option>Round / tubular</option><option>Square / rectangular hollow section</option><option>Angle / T-section</option><option>Concrete post</option><option>Timber post</option><option>To be engineered</option></select></div>
-          <div class="field"><label>Length</label><select data-field="Length"><option>Fence height + embedment (calculate)</option><option>1.8 m</option><option>2.1 m</option><option>2.4 m</option><option>2.7 m</option><option>3.0 m</option><option>To be engineered</option></select></div>
-        </div>
-      </div>
-
-      <div class="comp" data-comp="anchors">
-        <div class="comp-head"><input type="checkbox" checked disabled aria-label="Required"><span class="comp-title">C. Foundations</span><span class="tag required">Req.</span></div>
-        <div class="comp-fields">
-          <div class="field"><label>Method</label><select data-field="Method"><option>Concrete footing</option><option>Driven / rammed post</option><option>Ground screw / helical anchor</option><option>Rock anchor / drilled socket</option><option>Existing wall / slab fixing</option><option>Planting medium (live hedge)</option><option>Engineer / installer to determine</option></select></div>
-          <div class="field"><label>Material</label><select data-field="Material"><option>Concrete</option><option>Compacted soil / aggregate</option><option>Steel ground screw</option><option>Rock anchor and grout</option><option>Existing structural concrete</option><option>Not applicable / hedge</option><option>To be specified</option></select></div>
-        </div>
-      </div>
-
-      <div class="comp" data-comp="fixings">
-        <div class="comp-head"><input type="checkbox" checked disabled aria-label="Required"><span class="comp-title">D. Fixings</span><span class="tag required">Req.</span></div>
-        <div class="comp-fields">
-          <div class="field"><label>Type</label><select data-field="Type"><option>Galvanized binding wire / clips</option><option>Mesh tension bars and clamps</option><option>Bolts, nuts and brackets</option><option>Staples (for suitable timber posts)</option><option>Rail brackets</option><option>Welded connection (specified by fabricator)</option><option>Plant ties / supports</option></select></div>
-          <div class="field"><label>Material</label><select data-field="Material"><option>Galvanized steel</option><option>Stainless steel</option><option>Coated steel compatible with fence finish</option><option>UV-resistant polymer</option><option>Hot-dip galvanized hardware</option><option>To match selected system</option></select></div>
-        </div>
-      </div>
-
-      <div class="comp" data-comp="terminals">
-        <div class="comp-head"><input type="checkbox" checked disabled aria-label="Required"><span class="comp-title">E. Terminals / corners</span><span class="tag required">Req.</span></div>
-        <div class="comp-fields">
-          <div class="field"><label>Material</label><select data-field="Material"><option>Same as line posts, suitably sized</option><option>Heavy-duty galvanized steel</option><option>Reinforced concrete</option><option>Treated timber</option><option>Masonry / concrete pier</option><option>To be engineered</option></select></div>
-          <div class="field"><label>Bracing</label><select data-field="Bracing"><option>Diagonal brace / strut</option><option>H-brace assembly</option><option>Heavy-duty anchored terminal</option><option>Integrated rigid panel system</option><option>Not applicable to selected system — verify</option><option>Engineer / installer to specify</option></select></div>
-        </div>
-      </div>
-
-      <div class="sec">3 · Optional</div>
-
-      <div class="comp" data-comp="rails">
-        <div class="comp-head"><input type="checkbox" data-toggle data-default-checked="false"><span class="comp-title">F. Rails</span><span class="tag">Opt.</span></div>
-        <div class="comp-fields">
-          <div class="field"><label>Material</label><select data-field="Material"><option>Galvanized steel tube</option><option>Painted steel</option><option>Aluminium</option><option>Timber (treated)</option><option>Concrete</option><option>Composite</option></select></div>
-          <div class="field"><label>Arrangement</label><select data-field="Arrangement"><option>Top rail only</option><option>Top and bottom rails</option><option>Top, middle and bottom rails</option><option>As required by panel design</option></select></div>
-        </div>
-      </div>
-
-      <div class="comp" data-comp="tension">
-        <div class="comp-head"><input type="checkbox" data-toggle data-default-checked="false"><span class="comp-title">G. Tension wires</span><span class="tag">Opt.</span></div>
-        <div class="comp-fields">
-          <div class="field"><label>Material</label><select data-field="Material"><option>Galvanized high-tensile wire</option><option>PVC-coated galvanized wire</option><option>Stainless steel wire</option><option>System-matched tensioning kit</option></select></div>
-          <div class="field"><label>Arrangement</label><select data-field="Arrangement"><option>Top and bottom tension wires</option><option>Top, middle and bottom tension wires</option><option>Wire strainers at ends</option><option>Manufacturer-defined mesh tensioning</option></select></div>
-        </div>
-      </div>
-
-      <div class="comp" data-comp="gate">
-        <div class="comp-head"><input type="checkbox" data-toggle data-default-checked="true"><span class="comp-title">H. Access gate(s)</span><span class="tag">Opt.</span></div>
-        <div class="comp-fields">
-          <div class="field"><label>Type</label><select data-field="Type"><option>Single-leaf swing gate</option><option>Double-leaf swing gate</option><option>Sliding gate</option><option>Pedestrian gate</option><option>Custom access gate</option></select></div>
-          <div class="field"><label>Frame</label><select data-field="Material"><option>Galvanized steel</option><option>Powder-coated steel</option><option>Aluminium</option><option>Timber</option><option>Fence-matched mesh frame</option></select></div>
-          <div class="field"><label>Clear width</label><select data-field="Width"><option>0.9 m</option><option>1.2 m</option><option>2.4 m</option><option selected>3.0 m</option><option>3.6 m</option><option>4.0 m</option><option>5.0 m</option><option>Custom / to be measured</option></select></div>
-          <div class="field"><label>Hardware</label><select data-field="Hardware"><option>Hinges, latch and drop bolt</option><option>Hinges, latch and lock</option><option>Rollers, track and stopper</option><option>Heavy-duty locking hardware</option><option>Access control / automation</option></select></div>
-        </div>
-      </div>
-
-      <div class="comp" data-comp="bottom">
-        <div class="comp-head"><input type="checkbox" data-toggle data-default-checked="false"><span class="comp-title">I. Bottom barrier</span><span class="tag">Opt.</span></div>
-        <div class="comp-fields">
-          <div class="field"><label>Method</label><select data-field="Method"><option>Close mesh to ground (where suitable)</option><option>Buried mesh apron</option><option>Ground-level kickboard</option><option>Stone / masonry plinth</option><option>Additional low wire</option><option>Ground clearance retained</option></select></div>
-          <div class="field"><label>Material</label><select data-field="Material"><option>Galvanized mesh</option><option>Concrete / masonry</option><option>Galvanized wire</option><option>Timber / composite board</option><option>Stone / aggregate</option></select></div>
-        </div>
-      </div>
-
-      <div class="comp" data-comp="electric">
-        <div class="comp-head"><input type="checkbox" data-toggle data-default-checked="false"><span class="comp-title">J. Electric add-on</span><span class="tag">Opt.</span></div>
-        <div class="comp-fields">
-          <div class="field"><label>Power</label><select data-field="Power"><option>Solar with battery</option><option>Mains-powered energizer</option><option>Battery-powered energizer</option></select></div>
-          <div class="field"><label>Conductors</label><select data-field="Conductors"><option>Purpose-made insulated fence wire</option><option>High-tensile electric-fence wire</option><option>Approved tape / rope conductor</option></select></div>
-          <div class="field full" style="grid-column:1/-1"><label>Safety</label><select data-field="Safety"><option>Warning signs, safe installation and compliant earthing required</option><option>Specialist design and local compliance review required</option></select></div>
-        </div>
-      </div>
-
-      <div class="comp" data-comp="security">
-        <div class="comp-head"><input type="checkbox" data-toggle data-default-checked="false"><span class="comp-title">K. Security topping</span><span class="tag">Opt.</span></div>
-        <div class="comp-fields">
-          <div class="field"><label>Type</label><select data-field="Type"><option>Additional plain-wire strands</option><option>Approved security mesh extension</option><option>Anti-climb extension (design to suit site)</option><option>None — remove if not needed</option></select></div>
-          <div class="field"><label>Material</label><select data-field="Material"><option>Galvanized steel</option><option>Coated steel to match fence</option><option>System-matched extension kit</option></select></div>
-        </div>
-      </div>
-
-      <div class="comp" data-comp="drainage">
-        <div class="comp-head"><input type="checkbox" data-toggle data-default-checked="false"><span class="comp-title">L. Drainage</span><span class="tag">Opt.</span></div>
-        <div class="comp-fields">
-          <div class="field"><label>Method</label><select data-field="Method"><option>Local grading and erosion control</option><option>Drainage opening / water passage</option><option>Stone pitching around vulnerable posts</option><option>Concrete / masonry ground treatment</option><option>Site-specific civil design</option></select></div>
-          <div class="field"><label>Material</label><select data-field="Material"><option>Aggregate / stone</option><option>Concrete</option><option>Geotextile and aggregate</option><option>Drainage component to be specified</option></select></div>
-        </div>
-      </div>
-
-      <div class="comp" data-comp="hedge">
-        <div class="comp-head"><input type="checkbox" data-toggle data-default-checked="false"><span class="comp-title">M. Hedge / planting</span><span class="tag">Opt.</span></div>
-        <div class="comp-fields">
-          <div class="field"><label>Approach</label><select data-field="Approach"><option>Single-row hedge</option><option>Double-row hedge</option><option>Native species mix</option><option>Site-specific species selection</option></select></div>
-          <div class="field"><label>Support</label><select data-field="Support"><option>Temporary protective mesh</option><option>Individual plant guards</option><option>Fence-supported climbing plants</option><option>No additional support</option></select></div>
-        </div>
-      </div>
-
-      <div class="comp" data-comp="cctv">
-        <div class="comp-head"><input type="checkbox" data-toggle data-default-checked="false"><span class="comp-title">N. CCTV</span><span class="tag">Opt.</span></div>
-        <div class="comp-fields">
-          <div class="field"><label>Camera</label><select data-field="CameraType"><option>Bullet camera</option><option>Dome camera</option><option>PTZ camera</option><option>Multi-sensor camera</option></select></div>
-          <div class="field"><label>Resolution</label><select data-field="Resolution"><option>2 MP (1080p)</option><option>4 MP</option><option>8 MP (4K)</option></select></div>
-          <div class="field"><label>Mounting</label><select data-field="Mounting"><option>Fence post bracket</option><option>Wall bracket</option><option>Independent pole</option><option>Pole + adapter</option></select></div>
-          <div class="field"><label>Power</label><select data-field="Power"><option>PoE (network cable)</option><option>12 V DC local PSU</option><option>Solar + battery</option></select></div>
-          <div class="field"><label>Camera count</label><input type="number" data-field="CameraCount" min="1" step="1" value="4"></div>
-          <div class="field"><label>Cable / cam (m)</label><input type="number" data-field="CablePerCam" min="1" step="1" value="40"></div>
-          <div class="field"><label>Recording</label><select data-field="NVR"><option>8-channel NVR + 4 TB HDD</option><option>16-channel NVR + 8 TB HDD</option><option>Cloud recording only</option><option>None (view-only)</option></select></div>
-          <div class="field"><label>Cable</label><select data-field="Cabling"><option>Cat6 outdoor + PVC conduit</option><option>Cat6 outdoor + steel conduit</option><option>Fibre backbone + media converters</option></select></div>
-        </div>
-      </div>
-
-      <div class="comp" data-comp="lighting">
-        <div class="comp-head"><input type="checkbox" data-toggle data-default-checked="false"><span class="comp-title">O. Lighting</span><span class="tag">Opt.</span></div>
-        <div class="comp-fields">
-          <div class="field"><label>Luminaire</label><select data-field="Luminaire"><option>LED floodlight (30 W)</option><option>LED floodlight (50 W)</option><option>LED bollard (15 W)</option><option>Post-top LED (40 W)</option></select></div>
-          <div class="field"><label>Mounting</label><select data-field="Mounting"><option>Post-mounted</option><option>Wall-mounted</option><option>Independent pole</option></select></div>
-          <div class="field"><label>Spacing</label><select data-field="Count"><option>1 per 20 m</option><option>1 per 25 m</option><option>1 per 30 m</option><option>Manual count</option></select></div>
-          <div class="field"><label>Manual count</label><input type="number" data-field="ManualCount" min="0" step="1" value="6"></div>
-          <div class="field"><label>Controls</label><select data-field="Controls"><option>Photocell + timer</option><option>Photocell only</option><option>Manual switch</option><option>Smart / app control</option></select></div>
-          <div class="field"><label>Cable</label><select data-field="Cabling"><option>SWA cable + PVC conduit</option><option>SWA cable + steel conduit</option><option>Solar-powered (no cable)</option></select></div>
-        </div>
-      </div>
-
-      <div class="comp" data-comp="access">
-        <div class="comp-head"><input type="checkbox" data-toggle data-default-checked="false"><span class="comp-title">P. Access control</span><span class="tag">Opt.</span></div>
-        <div class="comp-fields">
-          <div class="field"><label>Entry</label><select data-field="Entry"><option>Keypad</option><option>Proximity card reader</option><option>Intercom with video</option><option>ANPR camera</option><option>None (manual only)</option></select></div>
-          <div class="field"><label>Operator</label><select data-field="Operator"><option>None</option><option>Swing gate motor (single leaf)</option><option>Swing gate motor (double leaf)</option><option>Sliding gate motor</option></select></div>
-          <div class="field"><label>Safety</label><select data-field="Safety"><option>Safety photocells + edges</option><option>Safety photocells only</option><option>Loop detectors</option><option>None — manual supervision</option></select></div>
-          <div class="field"><label>Panel</label><select data-field="Panel"><option>IP-rated control panel + battery backup</option><option>Basic control panel</option><option>Networked / cloud-managed</option></select></div>
-        </div>
-      </div>
-
-      <div class="comp" data-comp="signage">
-        <div class="comp-head"><input type="checkbox" data-toggle data-default-checked="false"><span class="comp-title">Q. Signage</span><span class="tag">Opt.</span></div>
-        <div class="comp-fields">
-          <div class="field"><label>Sign type</label><select data-field="SignType"><option>No-trespass / private property</option><option>Warning — electric fence</option><option>Warning — CCTV in operation</option><option>Site safety / construction</option><option>Custom branding</option></select></div>
-          <div class="field"><label>Mounting</label><select data-field="Mounting"><option>Post-mounted</option><option>Wall-mounted</option><option>Gate-mounted</option></select></div>
-          <div class="field"><label>Quantity</label><select data-field="Qty"><option>1 per 100 m</option><option>1 per 50 m</option><option>1 per gate</option><option>Manual count</option></select></div>
-          <div class="field"><label>Manual count</label><input type="number" data-field="ManualCount" min="0" step="1" value="4"></div>
-        </div>
-      </div>
-
+      <button class="mh-close" id="introClose" type="button" aria-label="Close">✕</button>
     </div>
-  </section>
-
-  <!-- MIDDLE COLUMN: BOM MATRIX -->
-  <section class="col" id="colBom">
-    <div class="col-header">BOM matrix <span style="font-size:10px;color:#64756d;text-transform:none;letter-spacing:0">edit rates · live totals</span></div>
-
-    <div class="bom-toolbar">
-      <span class="badge">Tier 1</span>
-      <span class="waste"><label for="wastePct" style="font-size:11px;color:#53675c;font-weight:700">Waste %</label><input type="number" id="wastePct" min="0" max="50" step="1" value="5"></span>
-      <span class="badge" style="background:#eef4ee">Tier 2</span>
-      <span class="waste"><label for="wastePct2" style="font-size:11px;color:#53675c;font-weight:700">Waste %</label><input type="number" id="wastePct2" min="0" max="50" step="1" value="10"></span>
-      <span class="badge" style="background:#d8e8f5;color:#1c5d8c">Tier 3</span>
-      <span class="waste"><label for="wastePct3" style="font-size:11px;color:#53675c;font-weight:700">Waste %</label><input type="number" id="wastePct3" min="0" max="50" step="1" value="5"></span>
-      <span class="badge" style="background:#fae9c8;color:#7a5a1c">Tier 4</span>
-      <span class="waste"><label for="wastePct4" style="font-size:11px;color:#53675c;font-weight:700">Waste %</label><input type="number" id="wastePct4" min="0" max="50" step="1" value="5"></span>
-    </div>
-
-    <div class="tier">
-      <div class="tier-head">
-        <span class="tier-label">Tier 1 · Structural</span>
-        <span class="tier-total" id="tierTotal1">₹0.00</span>
+    <div class="modal-body">
+      <div class="intro-section intro-why">
+        <div class="intro-tag">Why this exists</div>
+        <p>
+          In fencing, <strong>whoever puts a number in front of the customer first, sets the anchor.</strong>
+          If you visit a site and say <em>"I'll send you the quote tomorrow,"</em> the customer has 24–48 hours
+          to talk to a competitor who quoted on the spot. By the time your quote lands, you're not pitching —
+          you're arguing against a number someone else already put in their head.
+        </p>
+        <p>
+          This tool does two things: it helps the customer pick the right fence from JustFence's 20 products,
+          and it lets you quote that fence on the spot — with a total built from real cost components, not a guess.
+        </p>
       </div>
-      <div id="bomT1"></div>
-    </div>
-
-    <div class="tier">
-      <div class="tier-head t3">
-        <span class="tier-label">Tier 2 · Consumables</span>
-        <span class="tier-total" id="tierTotal2">₹0.00</span>
+      <div class="intro-section">
+        <div class="intro-tag intro-tag-green">What it does</div>
+        <ul class="intro-list">
+          <li><strong>Find Your Fence</strong> — four quick questions recommend the right fence from the 20-product range, with two alternates.</li>
+          <li><strong>Quote on the spot</strong> — pick a product, enter dimensions, and the rate is derived from a cost model of mesh, posts, footings, fittings and labour.</li>
+          <li><strong>Every quote shows its build-up</strong> — the customer sees exactly how ₹285 per sq ft is composed. Nothing is a black box.</li>
+          <li><strong>Override with proportional redistribution</strong> — if the site needs a different rate, enter the new number and every component scales by the same factor.</li>
+          <li><strong>One tap sends a formatted WhatsApp</strong> — ready for the customer to read in 5 seconds.</li>
+          <li><strong>One tap prints a slip</strong> — for the customer's site file.</li>
+        </ul>
       </div>
-      <div id="bomT2"></div>
-    </div>
-
-    <div class="tier">
-      <div class="tier-head t3" style="background:#eaf3fa">
-        <span class="tier-label">Tier 3 · Systems</span>
-        <span class="tier-total" id="tierTotal3">₹0.00</span>
+      <div class="intro-section">
+        <div class="intro-tag intro-tag-amber">What it is <em>not</em></div>
+        <ul class="intro-list intro-list-amber">
+          <li><strong>Not a replacement for the formal quotation.</strong> The office still sends the full quote with number, address, GSTIN, terms, validity.</li>
+          <li><strong>Not a final commitment.</strong> Tell the customer: <em>"This is an indicative price. The formal quotation follows after site verification."</em></li>
+          <li><strong>Not a material order.</strong> It doesn't calculate posts, clips or concrete bags — that's the office configurator's job.</li>
+          <li><strong>Not a sign-off on rates.</strong> Until the office replaces the placeholder cost model with JustFence's actual rates, the header badge says <em>"Indicative rates"</em>.</li>
+        </ul>
       </div>
-      <div id="bomT3"></div>
-    </div>
-
-    <div class="tier">
-      <div class="tier-head t4">
-        <span class="tier-label">Tier 4 · Civil</span>
-        <span class="tier-total" id="tierTotal4">₹0.00</span>
-      </div>
-      <div id="bomT4"></div>
-    </div>
-  </section>
-
-  <!-- RIGHT COLUMN: COMPUTED OUTPUTS -->
-  <section class="col" id="colOutputs">
-    <div class="col-header">Outputs <span style="font-size:10px;color:#64756d;text-transform:none;letter-spacing:0">pricing &amp; totals</span></div>
-    <div class="col-body">
-
-      <div class="price-box">
-        <h3>Pricing summary</h3>
-        <div class="price-controls">
-          <label for="taxPct">Tax/GST %</label>
-          <input type="number" id="taxPct" min="0" max="100" step="0.5" value="18">
-          <label for="currency">Currency</label>
-          <select id="currency">
-            <option value="INR" selected>INR ₹</option>
-            <option value="USD">USD $</option>
-            <option value="EUR">EUR €</option>
-            <option value="GBP">GBP £</option>
-          </select>
-        </div>
-        <div class="price-row tier-detail"><span class="lbl">Tier 1 · Structural</span><span id="subT1">₹0.00</span></div>
-        <div class="price-row tier-detail"><span class="lbl">Tier 2 · Consumables</span><span id="subT2">₹0.00</span></div>
-        <div class="price-row tier-detail"><span class="lbl">Tier 3 · Systems</span><span id="subT3">₹0.00</span></div>
-        <div class="price-row tier-detail"><span class="lbl">Tier 4 · Civil</span><span id="subT4">₹0.00</span></div>
-        <div class="price-row"><span class="lbl">Subtotal (pre-tax)</span><span id="subTotal">₹0.00</span></div>
-        <div class="price-row"><span class="lbl">Tax</span><span id="taxAmount">₹0.00</span></div>
-        <div class="price-row total"><span class="lbl">Grand total</span><span id="grandTotal">₹0.00</span></div>
-        <div class="override-note" id="overrideNote" style="display:none">
-          <span id="overrideCount"></span> price override(s).
-          <button type="button" id="clearOverrides">Clear all</button>
+      <div class="intro-section">
+        <div class="intro-tag intro-tag-green">How to use it</div>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div class="step-body"><strong>If the customer isn't sure what they need</strong>, tap "Help me choose" and answer four questions. You'll get a recommendation and two alternates.</div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-body"><strong>If you already know the product</strong>, tap "I know the product" and pick it directly.</div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-body"><strong>Enter length and height</strong> from your site measurement. Total updates live.</div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-body"><strong>Set the site condition</strong> — Level, Sloping, Rocky, or Wall-mounted.</div></div>
+          <div class="step"><div class="step-num">5</div><div class="step-body"><strong>Override only if needed</strong> — the build-up still explains the total, proportionally scaled.</div></div>
+          <div class="step"><div class="step-num">6</div><div class="step-body"><strong>Tap WhatsApp</strong> to send the quote to the customer before you leave the gate.</div></div>
         </div>
       </div>
-
-      <div class="diagram"><svg id="svgDiagram" viewBox="0 0 720 300" role="img" aria-label="Fence schematic"></svg></div>
-
-      <div class="sec" style="margin-top:0">Estimate</div>
-      <ul class="est" id="estimate"></ul>
-
-      <div class="sec">Overview</div>
-      <ul class="est" id="overview"></ul>
-
-      <div class="sec">Included components</div>
-      <ul class="est" id="components"></ul>
-
-      <div id="warnings"></div>
-
-      <div class="exclusions" id="exclusions"></div>
-
-      <div class="note"><strong>Design check:</strong> Final post sections, spacing, foundations, bracing and wire/mesh specs must be checked for site soil, wind, fence loads and local requirements. Electric fencing and electronic systems require specialist design and compliance. Prices are indicative rate-card midpoints only — verify with your supplier.</div>
-
-      <div class="buttons">
-        <button class="primary" id="printBtn" type="button">Print / PDF</button>
-        <button class="secondary" id="copyBtn" type="button">Copy JSON</button>
-        <button class="secondary" id="csvBtn" type="button">CSV</button>
-        <button class="secondary" id="resetBtn" type="button">Reset</button>
+      <div class="intro-section intro-urgent">
+        <div class="intro-tag intro-tag-amber">Why on-the-spot matters</div>
+        <p>
+          A quote you send tomorrow is a quote the customer <em>may</em> read. A quote you put in their hand today
+          is a quote they <em>will</em> react to — and once they've reacted, you're in a conversation, not a queue.
+        </p>
       </div>
-
-      <pre id="jsonOut"></pre>
-      <p class="footer-note">Quantities, BOM and prices are indicative only and do not verify structural adequacy or constitute a quotation.</p>
     </div>
-  </section>
-
+    <div class="modal-foot">
+      <div class="mf-hint">You can reopen this anytime from <strong>“?”</strong> in the header.</div>
+      <button class="mf-btn" id="introDismiss" type="button">Got it — let's go</button>
+    </div>
+  </div>
 </div>
 
+<!-- ============ APP ============ -->
+<div class="app">
+  <div class="hdr">
+    <div class="hdr-logo">JF</div>
+    <div class="hdr-txt"><h1 id="hdrTitle">Quote on Site</h1><p>JustFence · Bangalore</p></div>
+    <div class="indicative-badge" id="indicativeBadge" style="display:none">Indicative rates</div>
+    <button class="hdr-help" id="introBtn" type="button" title="How it works" aria-label="Open help">?</button>
+  </div>
+
+  <div class="progress" id="progressWrap">
+    <div class="progress-bar" id="progressBar" style="width:0%"></div>
+  </div>
+
+  <div class="body" id="body"></div>
+
+  <div class="actions hidden" id="actions"></div>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<div class="print-sheet" id="printSheet"></div>
+
 <script>
-/* ================================================================
-   Utilities
-================================================================ */
-const $ = s => document.querySelector(s);
-const $$ = s => [...document.querySelectorAll(s)];
-function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-function numFrom(str){const m=String(str).match(/-?\d+(\.\d+)?/);return m?parseFloat(m[0]):null;}
-function round(n,d=0){const f=Math.pow(10,d);return Math.round(n*f)/f;}
-function roundUp(n,d=0){const f=Math.pow(10,d);return Math.ceil(n*f)/f;}
-function roundBox(n,box){return Math.max(box, Math.ceil(n/box)*box);}
-function componentName(el){return el.querySelector('.comp-title').textContent.replace(/^[A-Z]\.\s*/,'').trim();}
-function valuesFor(el){
-  const out={};
-  el.querySelectorAll('[data-field]').forEach(f=>{
-    if(f.tagName==='SELECT'){
-      const opt=f.selectedOptions[0];
-      if(opt && !opt.hidden) out[f.dataset.field]=f.value;
-    } else {
-      out[f.dataset.field]=f.value;
-    }
-  });
-  return out;
-}
-function enabled(el){
-  const t=el.querySelector('[data-toggle]');
-  return !t || t.checked;
-}
-
-/* ================================================================
-   Rate book (indicative INR mid-2024/2025)
-================================================================ */
-const PRICE_BOOK = {
-  // Tier 1
-  'Chain-link mesh':{low:300,high:600,unit:'m²'},
-  'Welded wire mesh':{low:400,high:800,unit:'m²'},
-  'Plain wire (4 strands)':{low:60,high:120,unit:'m'},
-  'Plain wire (3 strands)':{low:50,high:100,unit:'m'},
-  'Plain wire (5 strands)':{low:75,high:150,unit:'m'},
-  'Plain wire (6 strands)':{low:90,high:180,unit:'m'},
-  'Barbed wire (4 strands)':{low:80,high:160,unit:'m'},
-  'Barbed wire (3 strands)':{low:65,high:130,unit:'m'},
-  'Barbed wire (5 strands)':{low:100,high:200,unit:'m'},
-  'Barbed wire (6 strands)':{low:120,high:240,unit:'m'},
-  'Electric fence conductor (4 strands)':{low:90,high:180,unit:'m'},
-  'Electric fence conductor (3 strands)':{low:75,high:150,unit:'m'},
-  'Electric fence conductor (5 strands)':{low:110,high:220,unit:'m'},
-  'Electric fence conductor (6 strands)':{low:130,high:260,unit:'m'},
-  'Timber rails':{low:180,high:400,unit:'m'},
-  'Hedge plants':{low:60,high:150,unit:'no.'},
-  'Galvanized steel posts (line)':{low:400,high:900,unit:'no.'},
-  'Pre-galvanized steel posts (line)':{low:380,high:850,unit:'no.'},
-  'Reinforced concrete posts (line)':{low:600,high:1500,unit:'no.'},
-  'Timber (treated) posts (line)':{low:350,high:800,unit:'no.'},
-  'Recycled plastic / composite posts (line)':{low:500,high:1200,unit:'no.'},
-  'Masonry / concrete piers posts (line)':{low:1500,high:4000,unit:'no.'},
-  'Galvanized steel posts (end / terminal)':{low:600,high:1400,unit:'no.'},
-  'Pre-galvanized steel posts (end / terminal)':{low:550,high:1300,unit:'no.'},
-  'Reinforced concrete posts (end / terminal)':{low:900,high:2000,unit:'no.'},
-  'Timber (treated) posts (end / terminal)':{low:500,high:1200,unit:'no.'},
-  'Diagonal brace / strut':{low:500,high:1500,unit:'no.'},
-  'H-brace assembly':{low:800,high:2000,unit:'no.'},
-  'Heavy-duty anchored terminal':{low:1200,high:3000,unit:'no.'},
-  'Integrated rigid panel system':{low:1000,high:2500,unit:'no.'},
-  'Concrete footings':{low:6000,high:9500,unit:'m³'},
-  'Footing base / gravel':{low:150,high:400,unit:'no.'},
-  'Driven post installation':{low:200,high:500,unit:'no.'},
-  'Ground screws / helical anchors':{low:1200,high:2500,unit:'no.'},
-  'Rock anchors + grout':{low:1500,high:3500,unit:'no.'},
-  'Wire strainers':{low:100,high:250,unit:'no.'},
-  'Single-leaf swing gate':{low:12000,high:30000,unit:'set'},
-  'Double-leaf swing gate':{low:25000,high:60000,unit:'set'},
-  'Sliding gate':{low:30000,high:80000,unit:'set'},
-  'Pedestrian gate':{low:8000,high:20000,unit:'set'},
-  'Custom access gate':{low:20000,high:80000,unit:'set'},
-  'Gate hardware':{low:800,high:3500,unit:'set'},
-  'Automation / access control':{low:25000,high:80000,unit:'set'},
-  'Buried mesh apron':{low:180,high:400,unit:'m'},
-  'Ground-level kickboard':{low:150,high:400,unit:'m'},
-  'Stone / masonry plinth':{low:6000,high:12000,unit:'m³'},
-  'Additional low wire':{low:30,high:80,unit:'m'},
-  'Close mesh to ground (extra)':{low:120,high:280,unit:'m²'},
-  'Additional wire strands':{low:25,high:70,unit:'m'},
-  'Approved security mesh extension':{low:400,high:900,unit:'m'},
-  'Anti-climb extension (design to suit site)':{low:500,high:1200,unit:'m'},
-  'Local grading and erosion control':{low:100,high:350,unit:'m'},
-  'Drainage opening / water passage':{low:200,high:600,unit:'m'},
-  'Stone pitching around vulnerable posts':{low:150,high:500,unit:'m'},
-  'Concrete / masonry ground treatment':{low:800,high:2000,unit:'m'},
-  'Site-specific civil design':{low:150,high:400,unit:'m'},
-  'Protective mesh':{low:80,high:200,unit:'m'},
-  'Individual plant guards':{low:80,high:250,unit:'no.'},
-  'Rails — Galvanized steel tube':{low:250,high:600,unit:'m'},
-  'Rails — Painted steel':{low:220,high:550,unit:'m'},
-  'Rails — Aluminium':{low:300,high:700,unit:'m'},
-  'Rails — Timber (treated)':{low:180,high:450,unit:'m'},
-  'Rails — Concrete':{low:400,high:900,unit:'m'},
-  'Rails — Composite':{low:350,high:800,unit:'m'},
-  'Tension wire — Galvanized high-tensile wire':{low:30,high:80,unit:'m'},
-  'Tension wire — PVC-coated galvanized wire':{low:40,high:95,unit:'m'},
-  'Tension wire — Stainless steel wire':{low:80,high:180,unit:'m'},
-  'Tension wire — System-matched tensioning kit':{low:50,high:120,unit:'m'},
-  // Tier 2
-  'Galvanized binding wire (1.6 mm)':{low:90,high:160,unit:'kg'},
-  'Mesh clips / hog rings':{low:150,high:400,unit:'no.'},
-  'Tension / brace bands':{low:25,high:80,unit:'no.'},
-  'Post caps':{low:15,high:60,unit:'no.'},
-  'Bolt + nut + washer sets':{low:15,high:50,unit:'no.'},
-  'Self-drilling screws':{low:250,high:550,unit:'no.'},
-  'Staples / U-nails':{low:120,high:280,unit:'no.'},
-  'Masonry anchors':{low:600,high:1400,unit:'no.'},
-  'Anchor bolts (cast-in)':{low:30,high:90,unit:'no.'},
-  'Turnbuckles / wire strainers':{low:80,high:220,unit:'no.'},
-  'UV-rated cable ties':{low:120,high:300,unit:'no.'},
-  'Galvanized touch-up paint':{low:300,high:600,unit:'no.'},
-  'Chemical anchor resin':{low:400,high:900,unit:'no.'},
-  'External sealant / mastic':{low:250,high:600,unit:'no.'},
-  'Warning tape / marker':{low:150,high:350,unit:'no.'},
-  // Tier 3
-  'Energizer':{low:6000,high:25000,unit:'no.'},
-  'Conductor':{low:15,high:40,unit:'m'},
-  'Insulators':{low:8,high:25,unit:'no.'},
-  'Warning signs':{low:80,high:250,unit:'no.'},
-  'Earth rod + clamp':{low:600,high:1400,unit:'no.'},
-  'Lightning diverter':{low:1200,high:3500,unit:'no.'},
-  'Voltage monitor / tester':{low:1500,high:3500,unit:'no.'},
-  'Lead-out cable':{low:40,high:100,unit:'m'},
-  'Insulated gate handles':{low:600,high:1500,unit:'no.'},
-  'Cut-out switch / isolator':{low:800,high:2000,unit:'no.'},
-  'Joint clamps':{low:30,high:90,unit:'no.'},
-  'Solar panel + battery':{low:6000,high:15000,unit:'set'},
-  'Bullet camera':{low:2500,high:8000,unit:'no.'},
-  'Dome camera':{low:2000,high:6500,unit:'no.'},
-  'PTZ camera':{low:12000,high:35000,unit:'no.'},
-  'Multi-sensor camera':{low:15000,high:45000,unit:'no.'},
-  'Camera mounting bracket':{low:200,high:900,unit:'no.'},
-  'Cat6 outdoor cable':{low:25,high:70,unit:'m'},
-  'Junction / weatherproof box':{low:250,high:900,unit:'no.'},
-  'Conduit':{low:30,high:90,unit:'m'},
-  'PoE switch':{low:3000,high:12000,unit:'no.'},
-  'Network video recorder':{low:8000,high:35000,unit:'no.'},
-  'Camera pole':{low:6000,high:18000,unit:'no.'},
-  'LED floodlight (30 W)':{low:1200,high:3500,unit:'no.'},
-  'LED floodlight (50 W)':{low:2000,high:5500,unit:'no.'},
-  'LED bollard (15 W)':{low:2500,high:7000,unit:'no.'},
-  'Post-top LED (40 W)':{low:3000,high:8000,unit:'no.'},
-  'Photocell / timer control':{low:800,high:2500,unit:'no.'},
-  'Lighting circuit cable':{low:60,high:180,unit:'m'},
-  'Weatherproof junction boxes':{low:250,high:800,unit:'no.'},
-  'Solar panel + battery per luminaire':{low:4000,high:12000,unit:'set'},
-  'Keypad':{low:2500,high:8000,unit:'no.'},
-  'Proximity card reader':{low:3000,high:9000,unit:'no.'},
-  'Intercom with video':{low:8000,high:25000,unit:'no.'},
-  'ANPR camera':{low:25000,high:80000,unit:'no.'},
-  'Swing gate motor (single leaf)':{low:18000,high:45000,unit:'set'},
-  'Swing gate motor (double leaf)':{low:30000,high:75000,unit:'set'},
-  'Sliding gate motor':{low:25000,high:65000,unit:'set'},
-  'Safety photocells + edges':{low:4000,high:12000,unit:'set'},
-  'Safety photocells only':{low:2000,high:6000,unit:'set'},
-  'Loop detectors':{low:3500,high:9000,unit:'set'},
-  'IP-rated control panel + battery backup':{low:6000,high:18000,unit:'no.'},
-  'Basic control panel':{low:3000,high:8000,unit:'no.'},
-  'Networked / cloud-managed':{low:12000,high:35000,unit:'no.'},
-  'No-trespass / private property':{low:150,high:450,unit:'no.'},
-  'Warning — electric fence':{low:150,high:450,unit:'no.'},
-  'Warning — CCTV in operation':{low:150,high:450,unit:'no.'},
-  'Site safety / construction':{low:150,high:500,unit:'no.'},
-  'Custom branding':{low:400,high:1500,unit:'no.'},
-  // Tier 4
-  'Excavation for footings':{low:400,high:900,unit:'m³'},
-  'Bedding sand':{low:1200,high:2500,unit:'m³'},
-  'Footing formwork (where required)':{low:150,high:400,unit:'m'},
-  'Backfill & compaction':{low:200,high:600,unit:'m³'},
-  'Spoil disposal':{low:400,high:1000,unit:'m³'},
-  'Post driving / ramming':{low:150,high:400,unit:'no.'},
-  'Trench for mesh apron':{low:400,high:900,unit:'m³'},
-  'Drainage opening / culvert':{low:8000,high:25000,unit:'no.'}
-};
-function getRange(item){
-  if(PRICE_BOOK[item]) return PRICE_BOOK[item];
-  const lower=item.toLowerCase();
-  for(const k of Object.keys(PRICE_BOOK)){ if(k.toLowerCase()===lower) return PRICE_BOOK[k]; }
-  for(const k of Object.keys(PRICE_BOOK)){ if(lower.includes(k.toLowerCase()) || k.toLowerCase().includes(lower)) return PRICE_BOOK[k]; }
-  return null;
-}
-function midpointPrice(item){
-  const r=getRange(item);
-  return r ? Math.round((r.low+r.high)/2) : 0;
-}
-
-/* ================================================================
-   Component visibility rules
-================================================================ */
-const componentRules={
-  barrier:['Chain-link mesh','Welded wire mesh','Plain-wire fence','Barbed-wire fence','Rail fence','Electric fence','Live hedge / biological fence','Hybrid / mixed system'],
-  posts:['Chain-link mesh','Welded wire mesh','Plain-wire fence','Barbed-wire fence','Rail fence','Electric fence','Live hedge / biological fence','Hybrid / mixed system'],
-  anchors:['Chain-link mesh','Welded wire mesh','Plain-wire fence','Barbed-wire fence','Rail fence','Electric fence','Live hedge / biological fence','Hybrid / mixed system'],
-  fixings:['Chain-link mesh','Welded wire mesh','Plain-wire fence','Barbed-wire fence','Rail fence','Electric fence','Live hedge / biological fence','Hybrid / mixed system'],
-  terminals:['Chain-link mesh','Welded wire mesh','Plain-wire fence','Barbed-wire fence','Rail fence','Electric fence','Hybrid / mixed system'],
-  rails:['Welded wire mesh','Rail fence','Hybrid / mixed system'],
-  tension:['Chain-link mesh','Plain-wire fence','Barbed-wire fence','Electric fence','Hybrid / mixed system'],
-  gate:['Chain-link mesh','Welded wire mesh','Plain-wire fence','Barbed-wire fence','Rail fence','Electric fence','Hybrid / mixed system'],
-  bottom:['Chain-link mesh','Welded wire mesh','Plain-wire fence','Barbed-wire fence','Electric fence','Hybrid / mixed system'],
-  electric:['Electric fence','Hybrid / mixed system'],
-  security:['Chain-link mesh','Welded wire mesh','Plain-wire fence','Barbed-wire fence','Hybrid / mixed system'],
-  drainage:['Chain-link mesh','Welded wire mesh','Plain-wire fence','Barbed-wire fence','Rail fence','Electric fence','Hybrid / mixed system'],
-  hedge:['Live hedge / biological fence','Hybrid / mixed system'],
-  cctv:['Chain-link mesh','Welded wire mesh','Plain-wire fence','Barbed-wire fence','Rail fence','Electric fence','Hybrid / mixed system'],
-  lighting:['Chain-link mesh','Welded wire mesh','Plain-wire fence','Barbed-wire fence','Rail fence','Electric fence','Hybrid / mixed system'],
-  access:['Chain-link mesh','Welded wire mesh','Plain-wire fence','Barbed-wire fence','Rail fence','Electric fence','Hybrid / mixed system'],
-  signage:['Chain-link mesh','Welded wire mesh','Plain-wire fence','Barbed-wire fence','Rail fence','Electric fence','Live hedge / biological fence','Hybrid / mixed system']
-};
-const purposeRules={
-  cctv:['Security perimeter','Farm and plantation protection','Nursery protection'],
-  lighting:['Security perimeter','Farm and plantation protection'],
-  access:['Security perimeter','Farm and plantation protection'],
-  signage:['Security perimeter','Farm and plantation protection','Livestock control','Plot boundary / demarcation','Nursery protection']
-};
-function setFieldOptions(field,allowed){
-  const opts=[...field.options]; opts.forEach(o=>o.hidden=false);
-  if(allowed&&allowed.length){
-    opts.forEach(o=>{o.hidden=!allowed.some(a=>o.text.toLowerCase().includes(a.toLowerCase()));});
-    if(field.selectedOptions[0]?.hidden){const f=opts.find(o=>!o.hidden); if(f)field.value=f.value;}
-  }
-}
-function hideEmptyFields(el){
-  el.querySelectorAll('.field').forEach(f=>{
-    const s=f.querySelector('select'); if(!s)return;
-    const visible=[...s.options].some(o=>!o.hidden);
-    f.style.display = visible ? '' : 'none';
-  });
-}
-function applyContextFilter(){
-  const type=$('#style').value;
-  const purpose=$('#purpose').value;
-  $$('.comp').forEach(el=>{
-    const key=el.dataset.comp;
-    const typeOk=(componentRules[key]||[]).includes(type);
-    const purposeOk=!purposeRules[key]||purposeRules[key].includes(purpose);
-    el.classList.toggle('filtered-out',!(typeOk&&purposeOk));
-    if(typeOk&&purposeOk) el.querySelectorAll('select[data-field]').forEach(s=>{[...s.options].forEach(o=>o.hidden=false);});
-  });
-  const barrier=document.querySelector('[data-comp="barrier"]');
-  const bm=barrier.querySelector('select[data-field="Material"]');
-  const bs=barrier.querySelector('select[data-field="Specification"]');
-  let material=[],specs=[];
-  if(type==='Chain-link mesh'){material=['Galvanized steel wire mesh','PVC-coated steel mesh'];specs=['Standard','50 × 50','75 × 75','100 × 100'];}
-  else if(type==='Welded wire mesh'){material=['Welded galvanized mesh','PVC-coated steel mesh'];specs=['Standard','50 × 50','75 × 75','100 × 100'];}
-  else if(type==='Plain-wire fence'){material=['Plain galvanized wire'];specs=['Standard','3 horizontal','4 horizontal','5 horizontal','6 horizontal'];}
-  else if(type==='Barbed-wire fence'){material=['Barbed galvanized wire'];specs=['Standard','3 horizontal','4 horizontal','5 horizontal','6 horizontal'];}
-  else if(type==='Rail fence'){material=['Timber rails','Mixed / hybrid'];specs=['Standard','Rails / panels'];}
-  else if(type==='Electric fence'){material=['Plain galvanized wire','Mixed / hybrid'];specs=['Standard','3 horizontal','4 horizontal','5 horizontal','6 horizontal'];}
-  else if(type==='Live hedge / biological fence'){material=['Living hedge / plants'];specs=['Standard'];}
-  else {material=null;specs=null;}
-  setFieldOptions(bm,material); setFieldOptions(bs,specs); hideEmptyFields(barrier);
-  const tt=document.querySelector('[data-comp="tension"] [data-toggle]');
-  if(['Chain-link mesh','Plain-wire fence','Barbed-wire fence','Electric fence'].includes(type)) tt.checked=true;
-  if(['Welded wire mesh','Rail fence','Live hedge / biological fence'].includes(type)) tt.checked=false;
-  const et=document.querySelector('[data-comp="electric"] [data-toggle]');
-  if(type!=='Electric fence'&&type!=='Hybrid / mixed system') et.checked=false;
-  $('#filterNote').textContent = type==='Hybrid / mixed system'
-    ? 'Hybrid: tick components needed per section.'
-    : 'Filtered: '+type+' · '+purpose;
-}
-
-/* ================================================================
-   Gather state
-================================================================ */
-function gatherState(){
-  const q=s=>document.querySelector(s);
-  const g=(comp,field)=>q(`[data-comp="${comp}"] [data-field="${field}"]`);
-  const v=(comp,field)=>{const el=g(comp,field); if(!el)return ''; return el.value;};
-  const n=(sel)=>{const el=q(sel); return el?numFrom(el.value):null;};
-  const heightM=numFrom($('#height').value)||1.5;
-  const runLength=numFrom($('#runLength').value)||30;
-  const spacingM=numFrom(v('posts','Spacing'))||2.5;
-  const gateEnabled=enabled(q('[data-comp="gate"]'));
-  const gateW=numFrom(v('gate','Width'))||3.0;
-  const gateType=v('gate','Type');
-  const gateMat=v('gate','Material');
-  const gateHardware=v('gate','Hardware');
-  const tensionEnabled=enabled(q('[data-comp="tension"]'));
-  const bottomEnabled=enabled(q('[data-comp="bottom"]'));
-  const hedgeEnabled=enabled(q('[data-comp="hedge"]'));
-  const electricEnabled=enabled(q('[data-comp="electric"]'));
-  const strands=numFrom(v('barrier','Specification'))||4;
-  const railArrangement=v('rails','Arrangement');
-  const railMat=v('rails','Material');
-  const tensionArrangement=v('tension','Arrangement');
-  const tensionMat=v('tension','Material');
-  const foundationMaterial=v('anchors','Material');
-  const foundationMethod=v('anchors','Method');
-  const barrierMat=v('barrier','Material');
-  const barrierSpec=v('barrier','Specification');
-  const postMat=v('posts','Material');
-  const postProfile=v('posts','Profile');
-  const postLengthSel=v('posts','Length');
-  const fixType=v('fixings','Type');
-  const fixMat=v('fixings','Material');
-  const bracing=v('terminals','Bracing');
-  const bottomMethod=v('bottom','Method');
-  const bottomMat=v('bottom','Material');
-  const electricPower=v('electric','Power');
-  const electricConductors=v('electric','Conductors');
-  const securityType=v('security','Type');
-  const securityMat=v('security','Material');
-  const drainageMethod=v('drainage','Method');
-  const drainageMat=v('drainage','Material');
-  const hedgeApproach=v('hedge','Approach');
-  const hedgeSupport=v('hedge','Support');
-  const cctvEnabled=enabled(q('[data-comp="cctv"]'));
-  const cctvCamera=v('cctv','CameraType');
-  const cctvRes=v('cctv','Resolution');
-  const cctvMounting=v('cctv','Mounting');
-  const cctvPower=v('cctv','Power');
-  const cctvNVR=v('cctv','NVR');
-  const cctvCabling=v('cctv','Cabling');
-  const camCount=numFrom(v('cctv','CameraCount'))||0;
-  const camCable=numFrom(v('cctv','CablePerCam'))||40;
-  const lightingEnabled=enabled(q('[data-comp="lighting"]'));
-  const lightLuminaire=v('lighting','Luminaire');
-  const lightControls=v('lighting','Controls');
-  const lightCabling=v('lighting','Cabling');
-  const lightCountSel=v('lighting','Count');
-  const lightManual=numFrom(v('lighting','ManualCount'))||0;
-  let lightCount;
-  if(/manual/i.test(lightCountSel)) lightCount=lightManual;
-  else {const per=numFrom(lightCountSel)||25; lightCount=Math.max(1,Math.ceil(runLength/per));}
-  const accessEnabled=enabled(q('[data-comp="access"]'));
-  const accessEntry=v('access','Entry');
-  const accessOperator=v('access','Operator');
-  const accessSafety=v('access','Safety');
-  const accessPanel=v('access','Panel');
-  const signageEnabled=enabled(q('[data-comp="signage"]'));
-  const signType=v('signage','SignType');
-  const signMounting=v('signage','Mounting');
-  const signQty=v('signage','Qty');
-  const signManualCount=numFrom(v('signage','ManualCount'))||0;
-  const civilToggle=$('#civilToggle').value;
-  return {
-    type:$('#style').value, purpose:$('#purpose').value, heightM, runLength, spacingM, terrain:$('#terrain').value,
-    gate:gateEnabled, gateW, gateType, gateMat, gateHardware,
-    tension:tensionEnabled, bottom:bottomEnabled, hedge:hedgeEnabled,
-    electric:electricEnabled, strands, railArrangement, railMat,
-    tensionArrangement, tensionMat, foundationMaterial, foundationMethod,
-    barrierMat, barrierSpec, postMat, postProfile, postLengthSel,
-    fixType, fixMat, bracing, bottomMethod, bottomMat,
-    electricPower, electricConductors, securityType, securityMat,
-    drainageMethod, drainageMat, hedgeApproach, hedgeSupport,
-    cctv:cctvEnabled, cctvCamera, cctvRes, cctvMounting, cctvPower, cctvNVR, cctvCabling, camCount, camCable,
-    lighting:lightingEnabled, lightLuminaire, lightControls, lightCabling, lightCount,
-    access:accessEnabled, accessEntry, accessOperator, accessSafety, accessPanel,
-    signage:signageEnabled, signType, signMounting, signQty, signManualCount,
-    civilToggle, electricSafetyAck:electricEnabled,
-    env:$('#environment').value, finish:$('#finish').value
-  };
-}
-
-/* ================================================================
-   BOM rules
-================================================================ */
-const BOM_RULES = [
-  {key:'barrier',tier:1,build:ctx=>{
-    const {type,runLength,heightM,barrierMat,barrierSpec,wastePct}=ctx;
-    const area=runLength*heightM, wf=1+wastePct/100, lines=[];
-    if(type==='Chain-link mesh'||type==='Welded wire mesh'){
-      const ap=(barrierSpec.match(/(\d+)\s*×\s*(\d+)/)||[])[0]||'to be sized';
-      lines.push({category:'Barrier / infill',item:type==='Chain-link mesh'?'Chain-link mesh':'Welded wire mesh',
-        spec:`${barrierMat}, ${ap} aperture, ${heightM.toFixed(2)} m high`,qty:roundUp(area*wf,1),unit:'m²',waste:true});
-    } else if(type==='Plain-wire fence'||type==='Barbed-wire fence'||type==='Electric fence'){
-      const strands=ctx.strands||4;
-      lines.push({category:'Barrier / infill',
-        item:(type==='Barbed-wire fence'?'Barbed wire':type==='Electric fence'?'Electric fence conductor':'Plain wire')+` (${strands} strands)`,
-        spec:`${barrierMat}, ${strands} strands over ${heightM.toFixed(2)} m`,
-        qty:roundUp(runLength*strands*wf,1),unit:'m',waste:true});
-    } else if(type==='Rail fence'){
-      const rows=ctx.railArrangement&&ctx.railArrangement.toLowerCase().includes('middle')?3:ctx.railArrangement&&ctx.railArrangement.toLowerCase().includes('top only')?1:2;
-      lines.push({category:'Barrier / infill',item:'Timber rails',spec:`${barrierMat}, ${rows} row(s)`,qty:roundUp(runLength*rows*wf,1),unit:'m',waste:true});
-    } else if(type==='Live hedge / biological fence'){
-      const plantsPerM=/double/i.test(ctx.hedgeApproach)?6:4;
-      lines.push({category:'Barrier / infill',item:'Hedge plants',spec:`${barrierMat}, ${plantsPerM}/m`,qty:roundUp(runLength*plantsPerM,1),unit:'no.',waste:true});
-    }
-    return lines;
-  }},
-  {key:'posts',build:ctx=>{
-    const {type,runLength,spacingM,heightM,postMat,postProfile,postLengthSel}=ctx;
-    if(type==='Live hedge / biological fence')return[];
-    const bays=Math.max(1,Math.floor(runLength/spacingM));
-    const endPosts=2, linePosts=Math.max(0,bays+1-endPosts);
-    const embed=/Soft|waterlogged/i.test(ctx.terrain)?0.9:/Rocky/i.test(ctx.terrain)?0.5:0.6;
-    const postLen=postLengthSel&&/calculate/i.test(postLengthSel)?heightM+embed:(numFrom(postLengthSel)||(heightM+embed));
-    const secDesc=postProfile?`, ${postProfile.toLowerCase()}`:'';
-    return [
-      {category:'Posts',item:`${postMat} posts (line)`,spec:`${postLen.toFixed(2)} m${secDesc}, spacing ${spacingM.toFixed(2)} m`,qty:linePosts,unit:'no.'},
-      {category:'Posts',item:`${postMat} posts (end / terminal)`,spec:`${(postLen+0.3).toFixed(2)} m, heavy-duty`,qty:endPosts,unit:'no.'}
-    ];
-  }},
-  {key:'terminals',build:ctx=>{
-    const {type,bracing}=ctx;
-    if(type==='Live hedge / biological fence')return[];
-    if(!bracing||/not applicable|none/i.test(bracing))return[];
-    return[{category:'Terminal & bracing',item:bracing,spec:'Galvanized steel hardware',qty:2,unit:'no.'}];
-  }},
-  {key:'anchors',build:ctx=>{
-    const {type,runLength,spacingM,foundationMethod,foundationMat}=ctx;
-    const bays=Math.max(1,Math.floor(runLength/spacingM));
-    const posts=bays+1;
-    if(type==='Live hedge / biological fence'||/hedge|not applicable/i.test(foundationMat))return[];
-    if(/Concrete footing/i.test(foundationMethod)){
-      const embed=/Soft|waterlogged/i.test(ctx.terrain)?0.9:0.6;
-      const volPer=0.3*0.3*(embed+0.05);
-      return[
-        {category:'Foundations',item:'Concrete footings',spec:`C20/25, 0.3 × 0.3 × ${(embed+0.05).toFixed(2)} m typical`,qty:roundUp(posts*volPer,1),unit:'m³'},
-        {category:'Foundations',item:'Footing base / gravel',spec:'Compacted aggregate, 50 mm',qty:posts,unit:'no.'}
-      ];
-    }
-    if(/Driven|Rammed/i.test(foundationMethod))
-      return[{category:'Foundations',item:'Driven post installation',spec:'Rammed, no concrete',qty:posts,unit:'no.'}];
-    if(/Ground screw/i.test(foundationMethod))
-      return[{category:'Foundations',item:'Ground screws / helical anchors',spec:'Galvanized',qty:posts,unit:'no.'}];
-    if(/Rock anchor/i.test(foundationMethod))
-      return[{category:'Foundations',item:'Rock anchors + grout',spec:'Galvanized, grouted socket',qty:posts,unit:'no.'}];
-    return[{category:'Foundations',item:'Foundation (method to be confirmed)',spec:foundationMethod,qty:posts,unit:'no.'}];
-  }},
-  {key:'rails',build:ctx=>{
-    const {type,runLength,railMat,railArrangement,wastePct}=ctx;
-    if(type==='Live hedge / biological fence')return[];
-    const rows=railArrangement&&railArrangement.toLowerCase().includes('middle')?3:railArrangement&&railArrangement.toLowerCase().includes('top only')?1:2;
-    return[{category:'Rails',item:`Rails — ${railMat}`,spec:`${rows} row(s)`,qty:roundUp(runLength*rows*(1+wastePct/100),1),unit:'m',waste:true}];
-  }},
-  {key:'tension',build:ctx=>{
-    const {type,runLength,tensionMat,tensionArrangement,wastePct}=ctx;
-    if(type==='Live hedge / biological fence')return[];
-    const strands=tensionArrangement&&tensionArrangement.toLowerCase().includes('middle')?3:2;
-    const wf=1+wastePct/100;
-    const lines=[{category:'Tensioning',item:`Tension wire — ${tensionMat}`,spec:`${strands} strand(s)`,qty:roundUp(runLength*strands*wf,1),unit:'m',waste:true}];
-    if(/strainer/i.test(tensionArrangement))
-      lines.push({category:'Tensioning',item:'Wire strainers',spec:'Galvanized, at ends',qty:4,unit:'no.'});
-    return lines;
-  }},
-  {key:'gate',build:ctx=>{
-    const {gateType,gateMat,gateW,gateHardware}=ctx;
-    const lines=[
-      {category:'Access gates',item:gateType,spec:`${gateMat}, clear width ${gateW.toFixed(2)} m`,qty:1,unit:'set'},
-      {category:'Access gates',item:'Gate hardware',spec:gateHardware,qty:1,unit:'set'}
-    ];
-    if(/double/i.test(gateType))lines[0].spec+=' (double leaf)';
-    if(/automation/i.test(gateHardware))
-      lines.push({category:'Access gates',item:'Automation / access control',spec:'To be specified',qty:1,unit:'set'});
-    return lines;
-  }},
-  {key:'bottom',build:ctx=>{
-    const {bottomMethod,bottomMat,runLength,wastePct}=ctx;
-    const wf=1+wastePct/100;
-    if(/mesh apron/i.test(bottomMethod))
-      return[{category:'Bottom barrier',item:'Buried mesh apron',spec:`${bottomMat}, 0.3 m wide`,qty:roundUp(runLength*wf,1),unit:'m',waste:true}];
-    if(/kickboard/i.test(bottomMethod))
-      return[{category:'Bottom barrier',item:'Ground-level kickboard',spec:bottomMat,qty:roundUp(runLength*wf,1),unit:'m',waste:true}];
-    if(/plinth/i.test(bottomMethod))
-      return[{category:'Bottom barrier',item:'Stone / masonry plinth',spec:`${bottomMat}, 0.2 × 0.2 m typical`,qty:roundUp(runLength*0.04,1),unit:'m³'}];
-    if(/low wire/i.test(bottomMethod))
-      return[{category:'Bottom barrier',item:'Additional low wire',spec:bottomMat,qty:roundUp(runLength*wf,1),unit:'m',waste:true}];
-    if(/close mesh/i.test(bottomMethod))
-      return[{category:'Bottom barrier',item:'Close mesh to ground (extra)',spec:bottomMat,qty:roundUp(runLength*wf,1),unit:'m²',waste:true}];
-    return[];
-  }},
-  {key:'security',build:ctx=>{
-    const {securityType,securityMat,runLength,wastePct}=ctx;
-    if(!securityType||/none/i.test(securityType))return[];
-    const wf=1+wastePct/100;
-    if(/strand/i.test(securityType))
-      return[{category:'Security topping',item:'Additional wire strands',spec:securityMat,qty:roundUp(runLength*3*wf,1),unit:'m',waste:true}];
-    return[{category:'Security topping',item:securityType,spec:securityMat,qty:roundUp(runLength*wf,1),unit:'m',waste:true}];
-  }},
-  {key:'drainage',build:ctx=>{
-    const {drainageMethod,drainageMat,runLength}=ctx;
-    return[{category:'Drainage',item:drainageMethod,spec:drainageMat,qty:roundUp(runLength,1),unit:'m'}];
-  }},
-  {key:'hedge',build:ctx=>{
-    const {hedgeApproach,hedgeSupport,runLength}=ctx;
-    const lines=[];
-    const perM=/double/i.test(hedgeApproach)?6:4;
-    lines.push({category:'Hedge / planting',item:'Hedge plants',spec:hedgeApproach,qty:roundUp(runLength*perM,1),unit:'no.'});
-    if(/protective mesh/i.test(hedgeSupport))
-      lines.push({category:'Hedge / planting',item:'Protective mesh',spec:hedgeSupport,qty:roundUp(runLength,1),unit:'m'});
-    if(/plant guards/i.test(hedgeSupport))
-      lines.push({category:'Hedge / planting',item:'Individual plant guards',spec:hedgeSupport,qty:Math.round(runLength*perM),unit:'no.'});
-    return lines;
-  }},
-  // Tier 2
-  {key:'fixings',tier:2,build:ctx=>{
-    const {type,runLength,heightM,spacingM,fixMat,wastePct}=ctx;
-    if(type==='Live hedge / biological fence')return[];
-    const bays=Math.max(1,Math.floor(runLength/spacingM)), posts=bays+1;
-    const wf=1+wastePct/100, area=runLength*heightM;
-    const isMesh=(type==='Chain-link mesh'||type==='Welded wire mesh');
-    const isWire=(type==='Plain-wire fence'||type==='Barbed-wire fence'||type==='Electric fence');
-    const isRail=(type==='Rail fence');
-    const lines=[];
-    if(!isRail){
-      const kg=roundUp((posts*0.02+runLength*0.01)*wf,2);
-      lines.push({category:'Binders & wire',item:'Galvanized binding wire (1.6 mm)',spec:'For tying mesh/wire to posts',qty:kg,unit:'kg',waste:true});
-    }
-    if(isMesh){
-      const edges=(posts-1)*2+2;
-      const clips=roundBox(edges*4*wf,100);
-      lines.push({category:'Mesh fasteners',item:'Mesh clips / hog rings',spec:'Galvanized, box of 100',qty:clips,unit:'no.',waste:true});
-    }
-    if(ctx.tension){
-      const strands=ctx.tensionArrangement&&ctx.tensionArrangement.toLowerCase().includes('middle')?3:2;
-      const bands=roundBox(posts*strands*wf,25);
-      lines.push({category:'Tension hardware',item:'Tension / brace bands',spec:'Galvanized, box of 25',qty:bands,unit:'no.',waste:true});
-    }
-    lines.push({category:'Post accessories',item:'Post caps',spec:`${fixMat}, one per post`,qty:posts,unit:'no.'});
-    lines.push({category:'Bolts & screws',item:'Bolt + nut + washer sets',spec:`${fixMat}, M8/M10`,qty:roundBox(6*wf,10),unit:'no.',waste:true});
-    lines.push({category:'Bolts & screws',item:'Self-drilling screws',spec:`${fixMat}, box of 100`,qty:roundBox(posts*8*wf,100),unit:'no.',waste:true});
-    if(/Timber/i.test(ctx.postMat)||isRail){
-      lines.push({category:'Fixings for timber',item:'Staples / U-nails',spec:'Galvanized, 40 mm',qty:roundBox(area*4*wf,500),unit:'no.',waste:true});
-    }
-    if(/Existing wall|slab/i.test(ctx.foundationMethod)){
-      lines.push({category:'Masonry fixings',item:'Masonry anchors',spec:'M10, box of 50',qty:roundBox(posts*4*wf,50),unit:'no.',waste:true});
-    } else if(/Concrete footing/i.test(ctx.foundationMethod)){
-      lines.push({category:'Masonry fixings',item:'Anchor bolts (cast-in)',spec:'M10, one per post base',qty:posts,unit:'no.'});
-    }
-    if(isWire&&/strainer/i.test(ctx.tensionArrangement||''))
-      lines.push({category:'Tension hardware',item:'Turnbuckles / wire strainers',spec:'Galvanized',qty:4,unit:'no.'});
-    lines.push({category:'Cable ties',item:'UV-rated cable ties',spec:'200 mm, box of 100',qty:roundBox(Math.ceil(runLength/5)*wf,100),unit:'no.',waste:true});
-    lines.push({category:'Touch-up & sealant',item:'Galvanized touch-up paint',spec:'Zinc-rich aerosol, 400 ml',qty:roundUp(runLength*0.01,1),unit:'no.'});
-    if(/Rock anchor/i.test(ctx.foundationMethod))
-      lines.push({category:'Touch-up & sealant',item:'Chemical anchor resin',spec:'Cartridge + mixing nozzle',qty:posts,unit:'no.'});
-    lines.push({category:'Touch-up & sealant',item:'External sealant / mastic',spec:'Polyurethane, 310 ml tube',qty:Math.max(1,Math.ceil(posts/10)),unit:'no.'});
-    if(/mesh apron/i.test(ctx.bottomMethod||''))
-      lines.push({category:'Warning',item:'Warning tape / marker',spec:'Buried services marker, 50 m roll',qty:1,unit:'no.'});
-    return lines;
-  }},
-  // Tier 3
-  {key:'electric',tier:3,build:ctx=>{
-    const {electricPower,electricConductors,runLength,strands,wastePct}=ctx;
-    const wf=1+wastePct/100;
-    const posts=Math.max(2,Math.floor(runLength/(ctx.spacingM||3))+1);
-    const lines=[
-      {category:'Electric fencing',item:'Energizer',spec:electricPower,qty:1,unit:'no.'},
-      {category:'Electric fencing',item:'Conductor',spec:electricConductors,qty:roundUp(runLength*(strands||3)*wf,1),unit:'m',waste:true},
-      {category:'Electric fencing',item:'Insulators',spec:'Post-mounted',qty:Math.max(4,(strands||3)*posts),unit:'no.'},
-      {category:'Electric fencing',item:'Warning signs',spec:'Per applicable standard',qty:4,unit:'no.'},
-      {category:'Electric fencing',item:'Earth rod + clamp',spec:'Galvanized, 1.2 m',qty:3,unit:'no.'},
-      {category:'Electric fencing',item:'Lightning diverter',spec:'Per energizer',qty:1,unit:'no.'},
-      {category:'Electric fencing',item:'Voltage monitor / tester',spec:'Portable',qty:1,unit:'no.'},
-      {category:'Electric fencing',item:'Lead-out cable',spec:'Insulated HT',qty:20,unit:'m'},
-      {category:'Electric fencing',item:'Insulated gate handles',spec:'Per gate crossing',qty:Math.max(1,ctx.gate?2:0),unit:'no.'},
-      {category:'Electric fencing',item:'Cut-out switch / isolator',spec:'Per section',qty:1,unit:'no.'},
-      {category:'Electric fencing',item:'Joint clamps',spec:'Per wire splice',qty:Math.max(4,Math.ceil(runLength/50)),unit:'no.'}
-    ];
-    if(/Solar/i.test(electricPower))
-      lines.push({category:'Electric fencing',item:'Solar panel + battery',spec:'Matched to energizer',qty:1,unit:'set'});
-    return lines;
-  }},
-  {key:'cctv',tier:3,build:ctx=>{
-    const {camCount,camCable,cctvCamera,cctvRes,cctvMounting,cctvPower,cctvNVR,cctvCabling,wastePct}=ctx;
-    const wf=1+wastePct/100;
-    const n=Math.max(1,camCount||1);
-    const totalCable=roundUp(n*(camCable||40)*wf,5);
-    const lines=[
-      {category:'CCTV',item:cctvCamera,spec:`${cctvRes}, ${cctvMounting}, ${cctvPower}`,qty:n,unit:'no.'},
-      {category:'CCTV',item:'Camera mounting bracket',spec:cctvMounting,qty:n,unit:'no.'},
-      {category:'CCTV',item:'Cat6 outdoor cable',spec:cctvCabling,qty:totalCable,unit:'m',waste:true},
-      {category:'CCTV',item:'Junction / weatherproof box',spec:'IP66, one per camera',qty:n,unit:'no.'},
-      {category:'CCTV',item:'Conduit',spec:'20 mm PVC',qty:totalCable,unit:'m'}
-    ];
-    if(/PoE/i.test(cctvPower))
-      lines.push({category:'CCTV',item:'PoE switch',spec:'8/16-port',qty:1,unit:'no.'});
-    if(cctvNVR&&!/None/i.test(cctvNVR))
-      lines.push({category:'CCTV',item:'Network video recorder',spec:cctvNVR,qty:1,unit:'no.'});
-    if(/Independent pole/i.test(cctvMounting))
-      lines.push({category:'CCTV',item:'Camera pole',spec:'4 m galv. steel',qty:n,unit:'no.'});
-    return lines;
-  }},
-  {key:'lighting',tier:3,build:ctx=>{
-    const {lightLuminaire,lightCount,lightControls,lightCabling,runLength,wastePct}=ctx;
-    const wf=1+wastePct/100;
-    const n=Math.max(1,lightCount||1);
-    const cableRun=roundUp(runLength*1.05*wf,5);
-    const lines=[
-      {category:'Lighting',item:lightLuminaire,spec:'LED, IP65 outdoor',qty:n,unit:'no.'},
-      {category:'Lighting',item:'Photocell / timer control',spec:lightControls,qty:1,unit:'no.'},
-      {category:'Lighting',item:'Lighting circuit cable',spec:lightCabling,qty:cableRun,unit:'m',waste:true},
-      {category:'Lighting',item:'Conduit',spec:'20 mm',qty:cableRun,unit:'m'},
-      {category:'Lighting',item:'Weatherproof junction boxes',spec:'IP66',qty:n,unit:'no.'}
-    ];
-    if(/Solar/i.test(lightCabling))
-      lines.push({category:'Lighting',item:'Solar panel + battery per luminaire',spec:'Matched to luminaire',qty:n,unit:'set'});
-    return lines;
-  }},
-  {key:'access',tier:3,build:ctx=>{
-    const {accessEntry,accessOperator,accessSafety,accessPanel}=ctx;
-    const lines=[];
-    if(!/None/i.test(accessEntry))
-      lines.push({category:'Access control',item:accessEntry,spec:'IP-rated outdoor unit',qty:1,unit:'no.'});
-    if(!/None/i.test(accessOperator))
-      lines.push({category:'Access control',item:accessOperator,spec:'With battery backup',qty:1,unit:'set'});
-    if(!/None/i.test(accessSafety))
-      lines.push({category:'Access control',item:accessSafety,spec:'Per applicable safety standard',qty:1,unit:'set'});
-    lines.push({category:'Access control',item:accessPanel,spec:'With battery backup',qty:1,unit:'no.'});
-    return lines;
-  }},
-  {key:'signage',tier:3,build:ctx=>{
-    const {signType,signMounting,signQty,signManualCount,runLength,gate}=ctx;
-    let n;
-    if(/manual/i.test(signQty))n=Math.max(0,signManualCount||0);
-    else if(/gate/i.test(signQty))n=gate?2:1;
-    else {const per=/50/.test(signQty)?50:100; n=Math.max(1,Math.ceil(runLength/per));}
-    if(n<=0)return[];
-    return[{category:'Signage',item:signType,spec:signMounting,qty:n,unit:'no.'}];
-  }},
-  // Tier 4
-  {key:'civil',tier:4,build:ctx=>{
-    if(ctx.civilToggle!=='yes')return[];
-    const {runLength,spacingM,terrain,foundationMethod,wastePct}=ctx;
-    const posts=Math.max(2,Math.floor(runLength/spacingM)+1);
-    const wf=1+wastePct/100;
-    const embed=/Soft|waterlogged/i.test(terrain)?0.9:/Rocky/i.test(terrain)?0.5:0.6;
-    const excavVol=0.4*0.4*embed;
-    const lines=[];
-    if(/Concrete footing/i.test(foundationMethod)){
-      lines.push({category:'Excavation',item:'Excavation for footings',spec:`0.4 × 0.4 × ${embed.toFixed(2)} m per post`,qty:roundUp(posts*excavVol,1),unit:'m³'});
-      lines.push({category:'Bedding',item:'Bedding sand',spec:'50 mm layer per footing',qty:roundUp(posts*0.4*0.4*0.05,1),unit:'m³'});
-      lines.push({category:'Formwork',item:'Footing formwork (where required)',spec:'4 sides per footing',qty:posts*4*0.4,unit:'m'});
-      lines.push({category:'Backfill',item:'Backfill & compaction',spec:'Selected material, compacted',qty:roundUp(posts*excavVol*0.6,1),unit:'m³'});
-      lines.push({category:'Disposal',item:'Spoil disposal',spec:'Off-site, licensed',qty:roundUp(posts*excavVol*0.4,1),unit:'m³'});
-    } else if(/Driven|Rammed/i.test(foundationMethod)){
-      lines.push({category:'Earthworks',item:'Post driving / ramming',spec:'Per post',qty:posts,unit:'no.'});
-    }
-    if(/Buried mesh apron/i.test(ctx.bottomMethod||'')){
-      lines.push({category:'Trenching',item:'Trench for mesh apron',spec:'0.3 × 0.4 m',qty:roundUp(runLength*0.12*wf,1),unit:'m³'});
-    }
-    if(/Drainage opening|water passage/i.test(ctx.drainageMethod||'')){
-      lines.push({category:'Drainage works',item:'Drainage opening / culvert',spec:'Per civil design',qty:1,unit:'no.'});
-    }
-    return lines;
-  }}
+/* ============================================================
+   PRODUCTS — shared by recommender and quoter
+   ============================================================ */
+const PRODUCTS = [
+  { name:'Check Mesh / Knot Fence', unit:'running_ft', tags:{site:['plot','farm'], priority:['boundary','security'], budget:['economy'], constraint:['sloping','coastal']},
+    short:'Hinged-joint mesh, farm-friendly',
+    why:'The cheapest way to mark a farm or plot boundary — hinged mesh follows the ground, no concrete footings needed.' },
+  { name:'JustFence Lato Fence', unit:'sq_ft', needsHeight:true, tags:{site:['home'], priority:['looks','privacy'], budget:['premium'], constraint:['height']},
+    short:'JustFence designer system',
+    why:'JustFence’s designer privacy system — used where the fence is part of the property’s look, not just a boundary.' },
+  { name:'Barbed Wire Fence', unit:'running_ft', tags:{site:['plot','farm'], priority:['security'], budget:['economy'], constraint:['sloping','coastal']},
+    short:'IS:278 wire, livestock standard',
+    why:'Classic livestock fence — cheap per foot, works on uneven land, and the barbed wire is a strong enough deterrent for animals.' },
+  { name:'Concertina Coil Fence', unit:'running_ft', tags:{site:['plot','factory'], priority:['security'], budget:['standard'], constraint:[]},
+    short:'Spiral razor coil, anti-intrusion',
+    why:'A visible deterrent for boundary security — the coil is hard to climb and signals "protected" more strongly than a plain mesh.' },
+  { name:'Polyhex Mesh Fence', unit:'sq_ft', needsHeight:true, tags:{site:['plot','farm'], priority:['boundary','security'], budget:['economy','standard'], constraint:['sloping','coastal']},
+    short:'PVC-coated hex mesh, durable',
+    why:'PVC coating makes it last longer than plain galvanised in humid or coastal areas — a good step up from chain link without the premium.' },
+  { name:'Anti Climb Mesh Fence', unit:'sq_ft', needsHeight:true, tags:{site:['factory','plot'], priority:['security'], budget:['standard','premium'], constraint:[]},
+    short:'358 profile, tamper-proof',
+    why:'The professional choice for factory and warehouse security — the 358 mesh has no footholds, and the fixings are tamper-proof.' },
+  { name:'Razor Wire Fence', unit:'running_ft', tags:{site:['factory'], priority:['security'], budget:['standard','premium'], constraint:[]},
+    short:'Flat-wrap razor, high security',
+    why:'The strongest visible deterrent short of a wall — used where the site genuinely needs to keep intruders out.' },
+  { name:'Nylon Nets Fence', unit:'sq_ft', needsHeight:true, tags:{site:['balcony','farm'], priority:['boundary','looks'], budget:['economy'], constraint:['wall','height']},
+    short:'Light net, sports and balcony',
+    why:'The cheapest way to close off a balcony or a cricket-practice area — light, quick, and easy to remove.' },
+  { name:'Invisible Grill Fence', unit:'sq_ft', needsHeight:true, tags:{site:['balcony','home'], priority:['looks','security'], budget:['standard','premium'], constraint:['wall','height']},
+    short:'SS wire, balcony safety',
+    why:'Barely visible from a distance — the balcony solution when safety is needed but the view must not be blocked.' },
+  { name:'Lattice Trellis Fence', unit:'sq_ft', needsHeight:true, tags:{site:['home'], priority:['looks'], budget:['standard','premium'], constraint:[]},
+    short:'Decorative open panel',
+    why:'Decorative screens that give partial privacy while letting air and light through — often used with climbing plants.' },
+  { name:'Welded Mesh Fence', unit:'sq_ft', needsHeight:true, tags:{site:['factory','plot'], priority:['security','boundary'], budget:['standard'], constraint:[]},
+    short:'Rigid panels, clean look',
+    why:'Rigid panels that hold their shape — looks more "finished" than chain link, and the panels can be replaced individually.' },
+  { name:'PVC Mesh Fence', unit:'sq_ft', needsHeight:true, tags:{site:['plot','home'], priority:['boundary','privacy'], budget:['economy','standard'], constraint:['height']},
+    short:'PVC-coated mesh, low cost',
+    why:'A lightweight PVC mesh for light privacy — cheaper than a solid fence and lasts well in rain.' },
+  { name:'Gabion Walls Fence', unit:'cubic_m', tags:{site:['home','plot'], priority:['looks','privacy'], budget:['premium','high'], constraint:[]},
+    short:'Stone-filled cages, landscape',
+    why:'Stone-filled wire cages — a boundary that doubles as a retaining wall, and looks distinctly architectural.' },
+  { name:'PVC Picket Fence', unit:'sq_ft', needsHeight:true, tags:{site:['home'], priority:['privacy','looks'], budget:['standard'], constraint:['height']},
+    short:'Classic picket, low maintenance',
+    why:'The familiar white picket look — privacy without a solid wall, and PVC means no painting, no termites.' },
+  { name:'RCC Picket Fence', unit:'sq_ft', needsHeight:true, tags:{site:['home','plot'], priority:['boundary','looks'], budget:['standard'], constraint:['height']},
+    short:'Concrete picket, weatherproof',
+    why:'Concrete pickets in the front yard — the same visual effect as PVC but far more durable in sun and rain.' },
+  { name:'Shade Net Fence', unit:'sq_ft', needsHeight:true, tags:{site:['farm'], priority:['boundary'], budget:['economy'], constraint:['sloping']},
+    short:'Shade cloth, farm protection',
+    why:'Shade and wind protection for crops or nurseries — not a security fence, but the right tool for agricultural cover.' },
+  { name:'Privezy® / Privacy Grass Wall', unit:'sq_ft', needsHeight:true, tags:{site:['home','balcony'], priority:['privacy','looks'], budget:['premium'], constraint:['height','wall']},
+    short:'JustFence privacy wall',
+    why:'JustFence’s own privacy system — the closest thing to a green wall, with full privacy and a finished look.' },
+  { name:'Precast Walls Fence', unit:'running_ft', tags:{site:['factory','plot'], priority:['security','boundary'], budget:['premium'], constraint:[]},
+    short:'RCC panels, wall-level security',
+    why:'A solid precast wall — the only option when the boundary needs real mass, not just a mesh line.' },
+  { name:'Tree Guard Fence', unit:'nos', tags:{site:['farm'], priority:['boundary'], budget:['economy','standard'], constraint:['sloping']},
+    short:'Per-tree protection cage',
+    why:'Individual protection for young trees — cheaper than fencing a whole plot when only the saplings need guarding.' },
+  { name:'Artificial Grass Fence', unit:'sq_ft', needsHeight:true, tags:{site:['home','balcony'], priority:['looks','privacy'], budget:['standard'], constraint:['height','wall']},
+    short:'Turf on frame, green screen',
+    why:'A green visual screen — instant privacy on a balcony or terrace, no maintenance, and it works where a fence can’t go into the ground.' }
 ];
 
-/* ================================================================
-   Price overrides (in-memory)
-================================================================ */
-let priceOverrides = {};
-function lineKey(l){return l.item+'|'+l.spec;}
+/* Cost models — placeholder values, replace with JustFence actual rates */
+const COST_MODELS = {
+  'Anti Climb Mesh Fence': { postsPerFt:0.4, postCost:950, footingPerPost:650, meshPerSqFt:145, fittingsPerSqFt:28, labourPerSqFt:62,
+    heightBands:[{upTo:1.8,mult:1.00},{upTo:2.1,mult:1.00},{upTo:2.4,mult:1.08},{upTo:3.0,mult:1.18}] },
+  'Chain Link Fence': { postsPerFt:0.4, postCost:620, footingPerPost:550, meshPerSqFt:78, fittingsPerSqFt:18, labourPerSqFt:42,
+    heightBands:[{upTo:1.2,mult:0.92},{upTo:1.5,mult:1.00},{upTo:1.8,mult:1.06},{upTo:2.4,mult:1.15}] },
+  'Barbed Wire Fence': { postsPerFt:0.33, postCost:480, footingPerPost:450, meshPerSqFt:22, fittingsPerSqFt:8, labourPerSqFt:18,
+    heightBands:[{upTo:1.2,mult:0.9},{upTo:1.5,mult:1.00},{upTo:1.8,mult:1.10},{upTo:2.4,mult:1.25}] },
+  'Concertina Coil Fence': { postsPerFt:0.33, postCost:680, footingPerPost:550, meshPerSqFt:95, fittingsPerSqFt:15, labourPerSqFt:32,
+    heightBands:[{upTo:1.2,mult:0.95},{upTo:1.5,mult:1.00},{upTo:1.8,mult:1.08},{upTo:2.4,mult:1.20}] },
+  'Razor Wire Fence': { postsPerFt:0.33, postCost:680, footingPerPost:550, meshPerSqFt:110, fittingsPerSqFt:18, labourPerSqFt:38,
+    heightBands:[{upTo:1.2,mult:0.95},{upTo:1.5,mult:1.00},{upTo:1.8,mult:1.08},{upTo:2.4,mult:1.20}] },
+  'Welded Mesh Fence': { postsPerFt:0.4, postCost:720, footingPerPost:580, meshPerSqFt:108, fittingsPerSqFt:22, labourPerSqFt:48,
+    heightBands:[{upTo:1.5,mult:0.96},{upTo:1.8,mult:1.00},{upTo:2.1,mult:1.06},{upTo:2.4,mult:1.14}] },
+  'Precast Walls Fence': { postsPerFt:0.4, postCost:2200, footingPerPost:1800, meshPerSqFt:280, fittingsPerSqFt:30, labourPerSqFt:110,
+    heightBands:[{upTo:1.5,mult:0.92},{upTo:1.8,mult:1.00},{upTo:2.1,mult:1.10},{upTo:2.4,mult:1.20}] },
+  'RCC Picket Fence': { postsPerFt:0.4, postCost:820, footingPerPost:620, meshPerSqFt:52, fittingsPerSqFt:15, labourPerSqFt:35,
+    heightBands:[{upTo:1.2,mult:0.9},{upTo:1.5,mult:1.00},{upTo:1.8,mult:1.08},{upTo:2.4,mult:1.20}] },
+  'PVC Picket Fence': { postsPerFt:0.4, postCost:520, footingPerPost:420, meshPerSqFt:62, fittingsPerSqFt:12, labourPerSqFt:28,
+    heightBands:[{upTo:1.2,mult:0.9},{upTo:1.5,mult:1.00},{upTo:1.8,mult:1.08},{upTo:2.4,mult:1.20}] },
+  'Invisible Grill Fence': { postsPerFt:0.4, postCost:480, footingPerPost:0, meshPerSqFt:142, fittingsPerSqFt:35, labourPerSqFt:55,
+    heightBands:[{upTo:1.2,mult:0.94},{upTo:1.5,mult:1.00},{upTo:1.8,mult:1.06},{upTo:2.4,mult:1.15}] },
+  'Privezy® / Privacy Grass Wall': { postsPerFt:0.4, postCost:380, footingPerPost:300, meshPerSqFt:48, fittingsPerSqFt:12, labourPerSqFt:26,
+    heightBands:[{upTo:1.5,mult:0.96},{upTo:1.8,mult:1.00},{upTo:2.1,mult:1.06},{upTo:2.4,mult:1.15}] },
+  'PVC Mesh Fence': { postsPerFt:0.4, postCost:480, footingPerPost:380, meshPerSqFt:68, fittingsPerSqFt:14, labourPerSqFt:30,
+    heightBands:[{upTo:1.2,mult:0.94},{upTo:1.5,mult:1.00},{upTo:1.8,mult:1.08},{upTo:2.4,mult:1.18}] },
+  'Polyhex Mesh Fence': { postsPerFt:0.4, postCost:540, footingPerPost:440, meshPerSqFt:62, fittingsPerSqFt:14, labourPerSqFt:32,
+    heightBands:[{upTo:1.2,mult:0.94},{upTo:1.5,mult:1.00},{upTo:1.8,mult:1.06},{upTo:2.4,mult:1.15}] },
+  'Check Mesh / Knot Fence': { postsPerFt:0.4, postCost:520, footingPerPost:420, meshPerSqFt:58, fittingsPerSqFt:12, labourPerSqFt:30,
+    heightBands:[{upTo:1.2,mult:0.94},{upTo:1.5,mult:1.00},{upTo:1.8,mult:1.08},{upTo:2.4,mult:1.18}] },
+  'Nylon Nets Fence': { postsPerFt:0.4, postCost:320, footingPerPost:280, meshPerSqFt:28, fittingsPerSqFt:8, labourPerSqFt:18,
+    heightBands:[{upTo:1.5,mult:0.96},{upTo:1.8,mult:1.00},{upTo:2.1,mult:1.06},{upTo:2.4,mult:1.14}] },
+  'Shade Net Fence': { postsPerFt:0.4, postCost:320, footingPerPost:260, meshPerSqFt:22, fittingsPerSqFt:6, labourPerSqFt:14,
+    heightBands:[{upTo:1.5,mult:0.96},{upTo:1.8,mult:1.00},{upTo:2.1,mult:1.06},{upTo:2.4,mult:1.14}] },
+  'Lattice Trellis Fence': { postsPerFt:0.4, postCost:620, footingPerPost:500, meshPerSqFt:180, fittingsPerSqFt:28, labourPerSqFt:55,
+    heightBands:[{upTo:1.5,mult:0.96},{upTo:1.8,mult:1.00},{upTo:2.1,mult:1.06},{upTo:2.4,mult:1.14}] },
+  'JustFence Lato Fence': { postsPerFt:0.4, postCost:580, footingPerPost:460, meshPerSqFt:138, fittingsPerSqFt:22, labourPerSqFt:46,
+    heightBands:[{upTo:1.5,mult:0.96},{upTo:1.8,mult:1.00},{upTo:2.1,mult:1.06},{upTo:2.4,mult:1.14}] },
+  'Artificial Grass Fence': { postsPerFt:0.4, postCost:380, footingPerPost:300, meshPerSqFt:42, fittingsPerSqFt:10, labourPerSqFt:22,
+    heightBands:[{upTo:1.5,mult:0.96},{upTo:1.8,mult:1.00},{upTo:2.1,mult:1.06},{upTo:2.4,mult:1.14}] },
+  'Gabion Walls Fence': { linearOnly:true, costPerM3:2800,
+    heightBands:[{upTo:1.5,mult:0.96},{upTo:1.8,mult:1.00},{upTo:2.1,mult:1.06},{upTo:2.4,mult:1.14}] },
+  'Tree Guard Fence': { linearOnly:true, costPerUnit:1400,
+    heightBands:[{upTo:1.5,mult:0.94},{upTo:1.8,mult:1.00},{upTo:2.1,mult:1.06},{upTo:2.4,mult:1.14}] }
+};
 
-/* ================================================================
-   Currency
-================================================================ */
-const CURRENCY={INR:{sym:'₹'},USD:{sym:'$'},EUR:{sym:'€'},GBP:{sym:'£'}};
-function fmtMoney(n){
-  const cur=$('#currency').value||'INR';
-  const sym=CURRENCY[cur].sym;
-  const v=Number(n||0);
-  return sym + v.toLocaleString(cur==='INR'?'en-IN':'en-US',{maximumFractionDigits:2,minimumFractionDigits:2});
+const SITE_MULT = {
+  level:   { foundation: 1.00, labour: 1.00, label: 'Level' },
+  sloping: { foundation: 1.15, labour: 1.12, label: 'Sloping' },
+  rocky:   { foundation: 1.35, labour: 1.20, label: 'Rocky' },
+  wall:    { foundation: 0.00, labour: 0.92, label: 'Wall-mounted' }
+};
+
+const QUESTIONS = [
+  { key:'site', title:'What are you fencing?', sub:'This narrows the range to the right family of fences.',
+    answers:[
+      { value:'plot', emoji:'🏞️', label:'Plot / open land', desc:'Vacant plot, investment land, farm boundary' },
+      { value:'home', emoji:'🏡', label:'Home / villa / apartment', desc:'Boundary, garden, front yard' },
+      { value:'factory', emoji:'🏭', label:'Factory / warehouse', desc:'Industrial site, godown, commercial campus' },
+      { value:'farm', emoji:'🌾', label:'Farm / agricultural land', desc:'Crop, orchard, livestock, nursery' },
+      { value:'balcony', emoji:'🏢', label:'Balcony / window / terrace', desc:'Apartment safety, child-pet safety, visual screen' }
+    ] },
+  { key:'priority', title:'What matters most?', sub:'Fencing has four jobs — pick the one you care about most.',
+    answers:[
+      { value:'security', emoji:'🔒', label:'Security', desc:'Keep intruders out, protect property' },
+      { value:'privacy', emoji:'🛡️', label:'Privacy', desc:'Block the view, add height, screen the boundary' },
+      { value:'boundary', emoji:'📐', label:'Just mark the boundary', desc:'Low cost, demarcation, not full security' },
+      { value:'looks', emoji:'✨', label:'Enhance the look', desc:'The fence should complement the property' }
+    ] },
+  { key:'budget', title:'Budget per running foot?', sub:'Approximate — no quotes are generated here.',
+    answers:[
+      { value:'economy', emoji:'💸', label:'Economy', desc:'Under ₹150 / ft' },
+      { value:'standard', emoji:'⚖️', label:'Standard', desc:'₹150 – ₹400 / ft' },
+      { value:'premium', emoji:'💎', label:'Premium', desc:'₹400 – ₹800 / ft' },
+      { value:'high', emoji:'🏛️', label:'High-end', desc:'₹800+ / ft' }
+    ] },
+  { key:'constraint', title:'Any site constraint?', sub:'Pick the one that most affects installation.',
+    answers:[
+      { value:'none', emoji:'✅', label:'None', desc:'Normal ground, no height restrictions' },
+      { value:'height', emoji:'📏', label:'Height limit', desc:'Society / municipal / apartment rules' },
+      { value:'wall', emoji:'🧱', label:'Wall / slab mounted', desc:'No ground digging allowed' },
+      { value:'sloping', emoji:'⛰️', label:'Sloping / uneven ground', desc:'Hillside, uneven plot boundary' },
+      { value:'coastal', emoji:'🌊', label:'Coastal / wet / corrosive', desc:'Sea air, high rain, humidity' }
+    ] }
+];
+
+const BRAND = { name:'JustFence', phone:'8884411094', email:'info@justfence.in', website:'justfence.in', gstPct:18, validityDays:15, advanceText:'50% advance' };
+const UNIT_LABEL = { running_ft:'running ft', sq_ft:'sq ft', nos:'nos', cubic_m:'m³' };
+const RATES_FINALISED = false;
+
+/* ============================================================
+   App state — screen navigator
+   ============================================================ */
+const app = {
+  screen: 'landing',      // 'landing' | 'recommender' | 'quoter'
+  reco: { step:0, answers:{} },
+  quote: {
+    product:null, lengthFt:0, heightM:1.5, volumeM3:0, quantity:0, areaSqFt:0,
+    site:'level', overrideRate:null
+  }
+};
+
+const $ = s => document.querySelector(s);
+const fmtINR = n => '₹' + Math.round(Number(n)||0).toLocaleString('en-IN');
+const getProduct = name => PRODUCTS.find(p => p.name === name);
+
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._tid); t._tid=setTimeout(()=>t.classList.remove('show'),2200); }
+function heightBandMult(model, h){ if(!model.heightBands) return 1; for(const b of model.heightBands){ if(h <= b.upTo) return b.mult; } return model.heightBands[model.heightBands.length-1].mult; }
+
+/* ============================================================
+   ROUTER
+   ============================================================ */
+function setScreen(name){
+  app.screen = name;
+  $('#progressWrap').classList.toggle('show', name==='recommender');
+  $('#indicativeBadge').style.display = (name==='quoter' && !RATES_FINALISED) ? '' : 'none';
+  $('#hdrTitle').textContent = name==='recommender' ? 'Find Your Fence' : (name==='quoter' ? 'Quote on Site' : 'Quote on Site');
+  render();
 }
 
-/* ================================================================
-   Generate BOM with prices
-================================================================ */
-function generateBOM(state){
-  const t1=[],t2=[],t3=[],t4=[];
-  const w1=Math.max(0,Math.min(50,numFrom($('#wastePct').value)||0));
-  const w2=Math.max(0,Math.min(50,numFrom($('#wastePct2').value)||0));
-  const w3=Math.max(0,Math.min(50,numFrom($('#wastePct3').value)||0));
-  const w4=Math.max(0,Math.min(50,numFrom($('#wastePct4').value)||0));
-  BOM_RULES.forEach(rule=>{
-    const comp=document.querySelector(`[data-comp="${rule.key}"]`);
-    if(comp){ if(comp.classList.contains('filtered-out'))return; if(!enabled(comp))return; }
-    const tier=rule.tier||1;
-    const ctx={...state,wastePct: tier===2?w2:tier===3?w3:tier===4?w4:w1};
-    const lines=rule.build(ctx)||[];
-    lines.forEach(l=>{
-      l.tier=l.tier||tier;
-      const range=getRange(l.item);
-      l.range=range?{low:range.low,high:range.high}:null;
-      const key=lineKey(l);
-      if(priceOverrides[key]!==undefined){
-        l.unitPrice=priceOverrides[key]; l.overridden=true;
-      } else {
-        l.unitPrice=midpointPrice(l.item); l.overridden=false;
-      }
-      l.lineTotal=round(l.qty*l.unitPrice,2);
-      if(l.tier===1)t1.push(l); else if(l.tier===2)t2.push(l); else if(l.tier===3)t3.push(l); else t4.push(l);
+function render(){
+  if(app.screen === 'landing') renderLanding();
+  else if(app.screen === 'recommender') renderRecommender();
+  else if(app.screen === 'quoter') renderQuoter();
+}
+
+/* ============================================================
+   LANDING SCREEN
+   ============================================================ */
+function renderLanding(){
+  $('#body').innerHTML = `
+    <h2 class="landing-title">How can I help?</h2>
+    <p class="landing-sub">Two paths — pick the one that fits the conversation you're having.</p>
+
+    <button class="landing-btn primary" onclick="startRecommender()">
+      <span class="lb-icon">🧭</span>
+      <span class="lb-body">
+        <span class="lb-title">Help me choose the fence</span>
+        <span class="lb-desc">Four quick questions → a recommendation from the 20-product range, plus two alternates.</span>
+      </span>
+    </button>
+
+    <button class="landing-btn" onclick="startQuoter(null)">
+      <span class="lb-icon">📐</span>
+      <span class="lb-body">
+        <span class="lb-title">I already know the product</span>
+        <span class="lb-desc">Go straight to the quoter — pick the product, enter dimensions, get a rate and total.</span>
+      </span>
+    </button>
+
+    <div style="margin-top:20px;font-size:11.5px;color:#94a39a;line-height:1.6;text-align:center">
+      The quote produced here is indicative. The formal quotation with GSTIN, quote number, and terms is issued by the office.
+    </div>
+  `;
+  $('#actions').classList.add('hidden');
+  $('#actions').innerHTML = '';
+}
+
+/* ============================================================
+   RECOMMENDER
+   ============================================================ */
+function startRecommender(){
+  app.reco = { step:0, answers:{} };
+  setScreen('recommender');
+}
+
+function scoreProduct(p, answers){
+  let score = 0;
+  if(p.tags.site.includes(answers.site)) score += 10;
+  if(p.tags.priority.includes(answers.priority)) score += 8;
+  if(p.tags.budget.includes(answers.budget)) score += 6;
+  if(answers.constraint === 'none') score += 2;
+  else if(p.tags.constraint.includes(answers.constraint)) score += 4;
+  if(p.tags.priority.includes(answers.priority) && p.tags.site.includes(answers.site)) score += 1;
+  return score;
+}
+function getRecommendations(answers){
+  const scored = PRODUCTS.map(p => ({ p, score: scoreProduct(p, answers) })).sort((a,b) => b.score - a.score);
+  return { top: scored[0], alternates: scored.slice(1,4).filter(x => x.score >= 12) };
+}
+
+function renderRecommender(){
+  updateProgress();
+  if(app.reco.step < QUESTIONS.length) renderQuestion(app.reco.step);
+  else renderRecommendations();
+}
+
+function updateProgress(){
+  const pct = app.reco.step >= QUESTIONS.length ? 100 : (app.reco.step / QUESTIONS.length) * 100;
+  $('#progressBar').style.width = pct + '%';
+}
+
+function renderQuestion(idx){
+  const q = QUESTIONS[idx];
+  const selected = app.reco.answers[q.key];
+  $('#body').innerHTML = `
+    <div class="step-tag">Step ${idx+1} of ${QUESTIONS.length}</div>
+    <h2 class="q-title">${q.title}</h2>
+    <p class="q-sub">${q.sub}</p>
+    <div class="answers">
+      ${q.answers.map(a => `
+        <button class="answer ${selected === a.value ? 'selected' : ''}" data-value="${a.value}">
+          <span class="emoji">${a.emoji}</span>
+          <span class="a-body">
+            <span class="a-title">${a.label}</span>
+            <span class="a-desc">${a.desc}</span>
+          </span>
+        </button>
+      `).join('')}
+    </div>
+  `;
+  $('#body').querySelectorAll('.answer').forEach(btn => {
+    btn.addEventListener('click', () => {
+      app.reco.answers[q.key] = btn.dataset.value;
+      setTimeout(() => { app.reco.step++; render(); }, 180);
     });
   });
-  return {t1,t2,t3,t4};
+
+  $('#actions').classList.remove('hidden');
+  $('#actions').innerHTML = `
+    ${idx > 0 ? '<button class="btn btn-back" onclick="recoBack()">← Back</button>' : '<button class="btn btn-back" onclick="setScreen(\'landing\')">← Home</button>'}
+    <button class="btn btn-next" id="nextBtn" ${!selected ? 'disabled' : ''}>${selected ? 'Continue →' : 'Select an option'}</button>
+  `;
+  document.getElementById('nextBtn').onclick = () => {
+    if(app.reco.answers[q.key]){ app.reco.step++; render(); }
+  };
 }
 
-/* ================================================================
-   Render BOM matrix
-================================================================ */
-function renderTier(target,lines,tierLabel,emptyMsg){
-  if(!lines.length){
-    $(target).innerHTML=`<p class="empty">${emptyMsg||('No '+tierLabel+' items.')}</p>`;
+function recoBack(){
+  if(app.reco.step > 0){ app.reco.step--; render(); }
+  else setScreen('landing');
+}
+
+function renderRecommendations(){
+  const { top, alternates } = getRecommendations(app.reco.answers);
+  if(!top){
+    $('#body').innerHTML = '<p>No matching fence — try changing an answer.</p>';
     return;
   }
-  const groups={};
-  lines.forEach(l=>{(groups[l.category]=groups[l.category]||[]).push(l);});
-  let html='<table class="matrix"><thead><tr>'+
-    '<th style="width:28%">Item</th>'+
-    '<th style="width:28%">Spec</th>'+
-    '<th class="num" style="width:8%">Qty</th>'+
-    '<th style="width:7%">Unit</th>'+
-    '<th class="num" style="width:15%">Rate</th>'+
-    '<th class="num" style="width:14%">Total</th>'+
-    '</tr></thead><tbody>';
-  Object.keys(groups).forEach(cat=>{
-    html+=`<tr class="cat"><td colspan="6">${esc(cat)}</td></tr>`;
-    groups[cat].forEach(l=>{
-      const key=lineKey(l);
-      const rangeHtml=l.range
-        ? `<span class="range">${fmtMoney(l.range.low)}–${fmtMoney(l.range.high)}</span>`
-        : `<span class="range">no rate card</span>`;
-      const trClass=l.overridden?'overridden':'';
-      html+=`<tr class="${trClass}">`+
-        `<td class="item">${esc(l.item)}</td>`+
-        `<td class="spec">${esc(l.spec)}</td>`+
-        `<td class="num">${esc(String(l.qty))}</td>`+
-        `<td>${esc(l.unit)}</td>`+
-        `<td class="num"><input class="rate" type="number" min="0" step="0.01" value="${l.unitPrice}" data-key="${esc(key)}" data-overridden="${l.overridden}">${rangeHtml}</td>`+
-        `<td class="num total" data-line-total="${esc(key)}">${fmtMoney(l.lineTotal)}</td>`+
-        `</tr>`;
-    });
-  });
-  html+='</tbody></table>';
-  $(target).innerHTML=html;
+  const p = top.p;
+  const a = app.reco.answers;
+  const siteLabel = QUESTIONS[0].answers.find(x => x.value === a.site)?.label || '';
+  const priorityLabel = QUESTIONS[1].answers.find(x => x.value === a.priority)?.label || '';
+  const budgetLabel = QUESTIONS[2].answers.find(x => x.value === a.budget)?.label || '';
+  const constraintLabel = QUESTIONS[3].answers.find(x => x.value === a.constraint)?.label || '';
+
+  $('#body').innerHTML = `
+    <div class="summary-strip"><strong>You said:</strong> ${siteLabel} · ${priorityLabel} · ${budgetLabel} · ${constraintLabel}</div>
+
+    <div class="reco-card">
+      <div class="reco-head">
+        <div class="r-tag">Best match</div>
+        <h2>${p.name}</h2>
+        <p>${p.short}</p>
+      </div>
+      <div class="reco-body">
+        <div class="why"><strong>Why this one:</strong> ${p.why}</div>
+        <div class="specs">
+          <strong>Site fit:</strong> ${siteLabel}<br>
+          <strong>Priority fit:</strong> ${priorityLabel}<br>
+          <strong>Budget fit:</strong> ${budgetLabel}
+        </div>
+        <div class="reco-actions">
+          <button class="quote" onclick="startQuoter('${p.name.replace(/'/g,"\\'")}')">Quote this →</button>
+          <button class="compare" onclick="startRecommender()">Change answers</button>
+        </div>
+      </div>
+    </div>
+
+    ${alternates.length ? `
+      <div class="alt-title">Also consider</div>
+      ${alternates.map(alt => `
+        <div class="alt-card">
+          <div class="alt-name">${alt.p.name}</div>
+          <div class="alt-why">${alt.p.why}</div>
+          <div class="alt-actions">
+            <button class="primary" onclick="startQuoter('${alt.p.name.replace(/'/g,"\\'")}')">Quote this →</button>
+          </div>
+        </div>
+      `).join('')}
+    ` : ''}
+
+    <div class="restart-link"><button onclick="setScreen('landing')">← Back to home</button></div>
+  `;
+
+  $('#actions').classList.remove('hidden');
+  $('#actions').innerHTML = `
+    <button class="btn btn-back" onclick="recoBack()">← Back</button>
+    <button class="btn btn-restart" onclick="startRecommender()">Start over</button>
+  `;
 }
 
-/* ================================================================
-   Pricing summary
-================================================================ */
-function renderPricing(bom){
-  const sum=arr=>arr.reduce((s,l)=>s+l.lineTotal,0);
-  const s1=sum(bom.t1),s2=sum(bom.t2),s3=sum(bom.t3),s4=sum(bom.t4);
-  const sub=s1+s2+s3+s4;
-  const taxPct=Math.max(0,Math.min(100,numFrom($('#taxPct').value)||0));
-  const tax=round(sub*taxPct/100,2);
-  const grand=round(sub+tax,2);
-  $('#subT1').textContent=fmtMoney(s1);
-  $('#subT2').textContent=fmtMoney(s2);
-  $('#subT3').textContent=fmtMoney(s3);
-  $('#subT4').textContent=fmtMoney(s4);
-  $('#subTotal').textContent=fmtMoney(sub);
-  $('#taxAmount').textContent=fmtMoney(tax)+` (${taxPct}%)`;
-  $('#grandTotal').textContent=fmtMoney(grand);
-  $('#tierTotal1').textContent=fmtMoney(s1);
-  $('#tierTotal2').textContent=fmtMoney(s2);
-  $('#tierTotal3').textContent=fmtMoney(s3);
-  $('#tierTotal4').textContent=fmtMoney(s4);
-  const all=[...bom.t1,...bom.t2,...bom.t3,...bom.t4];
-  const overrides=all.filter(l=>l.overridden);
-  if(overrides.length){
-    $('#overrideNote').style.display='flex';
-    $('#overrideCount').textContent=overrides.length;
-  } else {
-    $('#overrideNote').style.display='none';
-  }
-}
-
-/* ================================================================
-   Estimate + validation
-================================================================ */
-function estimate(state){
-  const run=Math.max(1,state.runLength||0);
-  const spacing=state.spacingM||2.5;
-  const bays=Math.max(1,Math.floor(run/spacing));
-  const posts=bays+1;
-  const area=run*(state.heightM||1.5);
-  const items=[];
-  items.push(['Run length',run.toFixed(1)+' m']);
-  items.push(['Line posts',String(posts)]);
-  items.push(['Bays / panels',String(bays)]);
-  items.push(['Barrier area',area.toFixed(1)+' m²']);
-  if(state.tension)items.push(['Tension wire',(run*2).toFixed(1)+' m']);
-  if(['Plain-wire fence','Barbed-wire fence','Electric fence'].includes(state.type)){
-    items.push(['Wire strand length',(run*(state.strands||4)).toFixed(1)+' m']);
-  }
-  if(state.gate)items.push(['Gate(s)',/double/i.test(state.gateType)?'1 double-leaf':'1 single-leaf']);
-  if(state.cctv)items.push(['Cameras',String(state.camCount||0)]);
-  if(state.lighting)items.push(['Luminaires',String(state.lightCount||0)]);
-  $('#estimate').innerHTML=items.map(([k,v])=>`<li><span>${esc(k)}</span><strong>${esc(v)}</strong></li>`).join('');
-}
-function validate(state){
-  const w=[];
-  if(state.env==='Coastal / corrosive'&&/untreated|weathering/i.test(state.finish))
-    w.push('Coastal exposure with untreated finish — consider HDG / stainless.');
-  if(state.electric&&!state.electricSafetyAck)
-    w.push('Electric fencing enabled but safety not acknowledged.');
-  if(state.hedge&&/Concrete|Steel/i.test(state.foundationMaterial||''))
-    w.push('Live hedge with rigid foundation — confirm planting medium.');
-  if(state.type==='Live hedge / biological fence'&&!state.hedge)
-    w.push('Live hedge fence selected but hedge component not ticked.');
-  if(state.gate&&state.gateW>state.runLength)
-    w.push('Gate width exceeds run length.');
-  if(state.heightM>2.4)
-    w.push('Height above 2.4 m — confirm planning & structural design.');
-  if(state.cctv&&state.runLength<10)
-    w.push('CCTV selected but run is very short — verify camera count.');
-  $('#warnings').innerHTML=w.length
-    ? `<div class="warn-box"><strong>Checks flagged</strong><ul>${w.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`
-    : '';
-}
-
-/* ================================================================
-   Exclusions
-================================================================ */
-const EXCLUSIONS=`<strong>Not included:</strong> Structural design and engineering sign-off; planning permission; utility diversions; ground investigation; CCTV GDPR compliance; electrical design, certification and commissioning; maintenance and warranty; traffic management; landscaping reinstatement; preliminaries. <em>Prices are indicative midpoints only and do not constitute a quotation — verify with supplier.</em>`;
-
-/* ================================================================
-   Update loop
-================================================================ */
-function update(){
-  applyContextFilter();
-  const included=$$('.comp').filter(el=>!el.classList.contains('filtered-out')&&enabled(el));
-  const state=gatherState();
-  drawDiagram(state);
-  estimate(state);
-  validate(state);
-
-  const overview=[];
-  overview.push(['Purpose',$('#purpose').value]);
-  overview.push(['Fence type',$('#style').value]);
-  overview.push(['Height',$('#height').value]);
-  overview.push(['Run',($('#runLength').value||'0')+' m']);
-  overview.push(['Terrain',$('#terrain').value]);
-  overview.push(['Exposure',$('#environment').value]);
-  overview.push(['Coating',$('#finish').value]);
-  overview.push(['Civil works',$('#civilToggle').value==='yes'?'Yes':'No']);
-  $('#overview').innerHTML=overview.map(([k,v])=>`<li><strong>${esc(k)}</strong><span>${esc(v)}</span></li>`).join('');
-
-  $('#components').innerHTML=included.map(el=>{
-    const fields=valuesFor(el);
-    const detail=Object.entries(fields).map(([k,v])=>`${k}: ${v}`).join(' · ')||'—';
-    return `<li><strong>${esc(componentName(el))}</strong><span>${esc(detail)}</span></li>`;
-  }).join('')||'<li class="empty">No components selected.</li>';
-
-  const bom=generateBOM(state);
-  renderTier('#bomT1',bom.t1,'Tier 1 structural','No Tier 1 items.');
-  renderTier('#bomT2',bom.t2,'Tier 2 consumables','No Tier 2 items.');
-  renderTier('#bomT3',bom.t3,'Tier 3 systems','No Tier 3 items.');
-  renderTier('#bomT4',bom.t4,'Tier 4 civil',state.civilToggle!=='yes'?'Civil works disabled — set "Civil works" to Yes in Inputs.':'No Tier 4 items.');
-  renderPricing(bom);
-  $('#exclusions').innerHTML=EXCLUSIONS;
-
-  const w1=numFrom($('#wastePct').value)||0;
-  const w2=numFrom($('#wastePct2').value)||0;
-  const w3=numFrom($('#wastePct3').value)||0;
-  const w4=numFrom($('#wastePct4').value)||0;
-  const taxPct=numFrom($('#taxPct').value)||0;
-  const currency=$('#currency').value;
-
-  const config={
-    purpose:$('#purpose').value,
-    fenceType:$('#style').value,
-    overallHeight:$('#height').value,
-    boundaryRunLength:$('#runLength').value+' m',
-    groundCondition:$('#terrain').value,
-    exposure:$('#environment').value,
-    coatingProtection:$('#finish').value,
-    civilWorksIncluded:state.civilToggle==='yes',
-    wasteAllowance:{structural:w1,consumables:w2,systems:w3,civil:w4},
-    pricing:{currency,taxPct,overrides:priceOverrides},
-    components:included.map(el=>({name:componentName(el),required:!el.querySelector('[data-toggle]'),specifications:valuesFor(el)})),
-    bom:{tier1Structural:bom.t1,tier2Consumables:bom.t2,tier3Systems:bom.t3,tier4Civil:bom.t4},
-    exclusions:EXCLUSIONS.replace(/<[^>]+>/g,'')
+/* ============================================================
+   QUOTER
+   ============================================================ */
+function startQuoter(productName){
+  app.quote = {
+    product: productName || null,
+    lengthFt:0, heightM:1.5, volumeM3:0, quantity:0, areaSqFt:0,
+    site:'level', overrideRate:null
   };
-  $('#jsonOut').textContent=JSON.stringify(config,null,2);
+  setScreen('quoter');
 }
 
-/* ================================================================
-   Diagram
-================================================================ */
-function drawDiagram(state){
-  const svg=$('#svgDiagram');
-  const W=720,H=300,padL=40,padR=20,padT=30,padB=60;
-  const plotW=W-padL-padR, plotH=H-padT-padB;
-  const runLen=Math.max(1,state.runLength||30);
-  const H_m=Math.max(0.3,state.heightM||1.5);
-  const spacing=state.spacingM||2.5;
-  const scaleX=plotW/runLen;
-  const scaleY=plotH/(H_m*1.35);
-  const groundY=padT+plotH;
-  const gateW=state.gate?(state.gateW||3.0):0;
-  const posts=[];
-  const totalPosts=Math.max(2,Math.floor(runLen/spacing)+1);
-  const bayCount=Math.max(1,totalPosts-1);
-  const effSpacing=runLen/bayCount;
-  for(let i=0;i<=bayCount;i++)posts.push(padL+i*effSpacing*scaleX);
-  let s='';
-  s+=`<rect x="0" y="0" width="${W}" height="${H}" fill="#fbfdfc"/>`;
-  s+=`<line x1="${padL-10}" y1="${groundY}" x2="${W-padR+10}" y2="${groundY}" stroke="#8a9a90" stroke-width="2"/>`;
-  s+=`<text x="${padL-10}" y="${groundY+18}" font-size="11" fill="#64756d">Ground</text>`;
-  const hPx=H_m*scaleY;
-  s+=`<line x1="${padL-4}" y1="${groundY}" x2="${padL-4}" y2="${groundY-hPx}" stroke="#1d6b4f" stroke-width="1" stroke-dasharray="3 3"/>`;
-  s+=`<text x="${padL-8}" y="${groundY-hPx-4}" font-size="10" fill="#1d6b4f">${H_m.toFixed(1)} m</text>`;
-  if(state.bottom)s+=`<rect x="${padL}" y="${groundY-10}" width="${plotW}" height="10" fill="#cbb98a" stroke="#8f7d4e"/>`;
-  if(state.hedge){
-    const hH=Math.min(hPx*0.6,60);
-    s+=`<rect x="${padL}" y="${groundY-hH}" width="${plotW}" height="${hH}" fill="#a9d6b4" opacity="0.55"/>`;
-    for(let x=padL;x<W-padR;x+=14)s+=`<circle cx="${x+7}" cy="${groundY-hH+6}" r="6" fill="#7cbf8e" opacity="0.75"/>`;
-    s+=`<text x="${padL+6}" y="${groundY-hH+18}" font-size="10" fill="#1d6b4f">Live hedge</text>`;
+function renderQuoter(){
+  const q = app.quote;
+  const p = q.product ? getProduct(q.product) : null;
+
+  let html = '';
+
+  // Product card
+  html += `<div class="card">
+    <label class="lbl" for="product">Product</label>
+    <select class="sel" id="product">
+      <option value="">— Select product —</option>
+      ${groupedOptions(q.product)}
+    </select>
+  </div>`;
+
+  if(!p){
+    html += `<div class="empty"><div class="big">📐</div><div>Select a product to start.</div></div>`;
+    $('#body').innerHTML = html;
+    $('#actions').classList.add('hidden');
+    // Wire product select
+    document.getElementById('product').addEventListener('change', e => {
+      q.product = e.target.value || null;
+      q.lengthFt=0; q.areaSqFt=0; q.volumeM3=0; q.quantity=0; q.overrideRate=null;
+      render();
+    });
+    return;
   }
-  const topY=groundY-hPx;
-  for(let i=0;i<posts.length-1;i++){
-    const x1=posts[i],x2=posts[i+1];
-    const isGate=state.gate&&i===posts.length-2;
-    if(isGate)continue;
-    const w=x2-x1;
-    if(state.type==='Chain-link mesh'||state.type==='Welded wire mesh'){
-      s+=`<rect x="${x1}" y="${topY}" width="${w}" height="${hPx}" fill="#e6f2ea" stroke="#1d6b4f" stroke-width="1"/>`;
-      for(let gx=x1;gx<x2;gx+=8)s+=`<line x1="${gx}" y1="${topY}" x2="${gx}" y2="${groundY}" stroke="#9ecbb0" stroke-width="0.6"/>`;
-      for(let gy=topY;gy<groundY;gy+=8)s+=`<line x1="${x1}" y1="${gy}" x2="${x2}" y2="${gy}" stroke="#9ecbb0" stroke-width="0.6"/>`;
-    } else if(['Plain-wire fence','Barbed-wire fence','Electric fence'].includes(state.type)){
-      const strands=state.strands||4;
-      for(let k=0;k<strands;k++){
-        const y=topY+(hPx/(strands-1||1))*k;
-        const col=state.type==='Electric fence'?'#d49a1f':state.type==='Barbed-wire fence'?'#7d5a1c':'#1d6b4f';
-        const dash=state.type==='Electric fence'?'5 4':state.type==='Barbed-wire fence'?'4 3':'';
-        s+=`<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="${col}" stroke-width="1.6" ${dash?`stroke-dasharray="${dash}"`:''}/>`;
-        if(state.type==='Barbed-wire fence')for(let bx=x1+8;bx<x2;bx+=12)s+=`<circle cx="${bx}" cy="${y}" r="1.4" fill="#7d5a1c"/>`;
-        if(state.type==='Electric fence')s+=`<circle cx="${x1}" cy="${y}" r="2.4" fill="#f1c34a" stroke="#a97a12"/>`;
-      }
-    } else if(state.type==='Rail fence'){
-      const arr=state.railArrangement||'top and bottom';
-      const ys=arr.toLowerCase().includes('middle')?[0,0.5,1]:arr.toLowerCase().includes('top only')?[0]:[0,1];
-      ys.forEach(f=>{const y=topY+hPx*f; s+=`<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="#8a5a2b" stroke-width="5" stroke-linecap="round"/>`;});
+
+  // Dimensions
+  html += `<div class="card">`;
+  if(p.unit === 'running_ft'){
+    html += `<div class="row single"><div><label class="lbl" for="lenFt">Length (running ft)</label>
+      <input class="inp" type="number" id="lenFt" inputmode="decimal" value="${q.lengthFt||''}" placeholder="e.g. 120"></div></div>`;
+  } else if(p.unit === 'sq_ft'){
+    html += `<div class="row">
+      <div><label class="lbl" for="lenFt">Length (ft)</label><input class="inp" type="number" id="lenFt" inputmode="decimal" value="${q.lengthFt||''}" placeholder="120"></div>
+      <div><label class="lbl" for="htM">Height (m)</label><input class="inp" type="number" id="htM" inputmode="decimal" step="0.1" value="${q.heightM}" placeholder="2.1"></div>
+    </div>`;
+  } else if(p.unit === 'cubic_m'){
+    html += `<div class="row single"><div><label class="lbl" for="volM3">Volume (m³)</label>
+      <input class="inp" type="number" id="volM3" inputmode="decimal" step="0.1" value="${q.volumeM3||''}" placeholder="5"></div></div>`;
+  } else if(p.unit === 'nos'){
+    html += `<div class="row single"><div><label class="lbl" for="qty">Quantity (nos)</label>
+      <input class="inp" type="number" id="qty" inputmode="decimal" value="${q.quantity||''}" placeholder="10"></div></div>`;
+  }
+
+  // Site condition
+  html += `<div class="lbl" style="margin-top:12px">Site condition</div>
+    <div class="seg" id="siteSeg">
+      <button data-site="level" type="button" class="${q.site==='level'?'on':''}">Level</button>
+      <button data-site="sloping" type="button" class="${q.site==='sloping'?'on':''}">Sloping</button>
+      <button data-site="rocky" type="button" class="${q.site==='rocky'?'on':''}">Rocky</button>
+      <button data-site="wall" type="button" class="${q.site==='wall'?'on':''}">Wall-mounted</button>
+    </div>`;
+
+  // Rate block
+  const derived = deriveRate();
+  const isOverride = q.overrideRate !== null;
+  const displayRate = isOverride ? q.overrideRate : (derived ? derived.rate : 0);
+  const unitLabel = derived ? derived.unit : 'unit';
+
+  html += `<div class="rate-block ${isOverride ? 'overridden' : ''}" id="rateBlock">
+    <div class="rate-line">
+      <div class="lhs">Rate per ${unitLabel}<strong id="rateMain">${fmtINR(displayRate)}</strong></div>
+      <div class="rhs">
+        <button class="rate-btn" id="buildBtn" type="button">Build-up</button>
+        <button class="rate-btn warn" id="overrideBtn" type="button">Override</button>
+        ${isOverride ? '<button class="rate-btn reset" id="resetBtn" type="button">Reset</button>' : ''}
+      </div>
+    </div>
+
+    <div class="override-editor" id="overrideEditor">
+      <div class="oe-title">Override derived rate</div>
+      <input type="number" id="overrideInput" inputmode="decimal" min="0" step="1" placeholder="Enter new rate in ₹">
+      <div class="oe-hint" id="overrideHint"></div>
+      <div class="oe-actions">
+        <button class="cancel" id="overrideCancel" type="button">Cancel</button>
+        <button class="apply" id="overrideApply" type="button">Apply</button>
+      </div>
+    </div>
+
+    <div class="buildup" id="buildup">
+      <div class="buildup-title" id="buildupTitle">Rate build-up</div>
+      <div id="buildupRows"></div>
+    </div>
+  </div>`;
+
+  if(isOverride){
+    html += `<div class="override-note open">
+      <strong>⚠ Rate overridden</strong><br>
+      Derived: ${fmtINR(derived.rate)} / ${derived.unit} → Quoted: ${fmtINR(q.overrideRate)} / ${derived.unit} (×${(q.overrideRate/derived.rate).toFixed(3)})<br>
+      All components scaled proportionally. Open <em>Build-up</em> to see the breakdown.
+    </div>`;
+  }
+
+  html += `</div>`; // close dimensions card
+
+  // Total card
+  const t = computeTotals();
+  html += `<div class="total-card">
+    <div class="area-line">${areaLine()}</div>
+    <div class="line"><span>Subtotal</span><span>${fmtINR(t.subtotal)}</span></div>
+    <div class="line"><span>GST ${BRAND.gstPct}%</span><span>${fmtINR(t.gst)}</span></div>
+    <div class="line total"><span>Total</span><span>${fmtINR(t.total)}</span></div>
+  </div>`;
+
+  // Customer name
+  html += `<div class="card">
+    <label class="lbl" for="custName">Customer name <span style="font-weight:400;color:#94a39a">(optional)</span></label>
+    <input class="inp" type="text" id="custName" placeholder="e.g. Mr. Sharma">
+  </div>`;
+
+  $('#body').innerHTML = html;
+
+  /* Wire everything */
+  document.getElementById('product').addEventListener('change', e => {
+    q.product = e.target.value || null;
+    q.lengthFt=0; q.areaSqFt=0; q.volumeM3=0; q.quantity=0; q.overrideRate=null;
+    render();
+  });
+  const lenEl=document.getElementById('lenFt'), htEl=document.getElementById('htM'),
+        volEl=document.getElementById('volM3'), qtyEl=document.getElementById('qty');
+  if(lenEl) lenEl.oninput = () => {
+    q.lengthFt = parseFloat(lenEl.value)||0;
+    if(p.unit==='sq_ft') q.areaSqFt = Math.round(q.lengthFt * q.heightM * 10.7639);
+    render(); // re-render so rate/total update
+  };
+  if(htEl) htEl.oninput = () => {
+    q.heightM = parseFloat(htEl.value)||0;
+    q.areaSqFt = Math.round(q.lengthFt * q.heightM * 10.7639);
+    render();
+  };
+  if(volEl) volEl.oninput = () => { q.volumeM3 = parseFloat(volEl.value)||0; render(); };
+  if(qtyEl) qtyEl.oninput = () => { q.quantity = parseFloat(qtyEl.value)||0; render(); };
+
+  document.getElementById('siteSeg').addEventListener('click', e => {
+    const btn = e.target.closest('button'); if(!btn) return;
+    q.site = btn.dataset.site;
+    if(q.overrideRate !== null){ q.overrideRate = null; toast('Site changed — override cleared'); }
+    render();
+  });
+
+  document.getElementById('buildBtn').onclick = () => {
+    const b = document.getElementById('buildup');
+    if(b) b.classList.toggle('open');
+  };
+  document.getElementById('overrideBtn').onclick = openOverrideEditor;
+  const cancelBtn = document.getElementById('overrideCancel');
+  const applyBtn = document.getElementById('overrideApply');
+  if(cancelBtn) cancelBtn.onclick = () => { document.getElementById('overrideEditor').classList.remove('open'); };
+  if(applyBtn) applyBtn.onclick = applyOverride;
+  const inputEl = document.getElementById('overrideInput');
+  if(inputEl) inputEl.addEventListener('keydown', e => { if(e.key==='Enter'){ e.preventDefault(); applyOverride(); } });
+  const resetBtn = document.getElementById('resetBtn');
+  if(resetBtn) resetBtn.onclick = () => { q.overrideRate = null; render(); toast('Rate reset'); };
+
+  // Build-up rows
+  renderBuildup();
+
+  // Actions
+  $('#actions').classList.remove('hidden');
+  const ready = t.qty > 0;
+  $('#actions').innerHTML = `
+    <button class="btn btn-back" onclick="setScreen('landing')">← Home</button>
+    <button class="btn btn-wa" id="waBtn" ${ready ? '' : 'disabled'}>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.6-.8-1.9-.9-.3-.1-.5-.1-.7.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-1.5-.7-2.5-1.3-3.5-3-.3-.5.3-.4.8-1.3.1-.2 0-.4 0-.5 0-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5H9c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.2.2 2.1 3.2 5.1 4.5 1.9.8 2.6.9 3.5.7.5-.1 1.6-.6 1.8-1.3.2-.7.2-1.2.2-1.3-.1-.2-.3-.2-.5-.3zM12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.4 1.3 4.9L2 22l5.3-1.3c1.4.7 3 1.2 4.7 1.2 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>
+      WhatsApp
+    </button>
+    <button class="btn btn-print" id="printBtn" ${ready ? '' : 'disabled'}>🖨 Print</button>
+  `;
+  document.getElementById('waBtn').onclick = () => { if(currentQty()<=0) return toast('Enter dimensions first'); shareWhatsApp(); };
+  document.getElementById('printBtn').onclick = () => { if(currentQty()<=0) return toast('Enter dimensions first'); buildPrintSheet(); setTimeout(()=>window.print(),100); };
+}
+
+function groupedOptions(selected){
+  const groups = [
+    { label:'Per running foot', unit:'running_ft' },
+    { label:'Per sq ft', unit:'sq_ft' },
+    { label:'Per unit', unit:'nos' },
+    { label:'Per m³', unit:'cubic_m' }
+  ];
+  let html = '';
+  groups.forEach(g => {
+    const items = PRODUCTS.filter(p => p.unit === g.unit);
+    if(!items.length) return;
+    html += `<optgroup label="${g.label}">`;
+    items.forEach(p => {
+      html += `<option value="${p.name.replace(/"/g,'&quot;')}" ${p.name===selected?'selected':''}>${p.name}</option>`;
+    });
+    html += `</optgroup>`;
+  });
+  return html;
+}
+
+/* ============================================================
+   Rate calculation
+   ============================================================ */
+function deriveRate(){
+  const q = app.quote;
+  if(!q.product) return null;
+  const p = getProduct(q.product);
+  const model = COST_MODELS[p.name];
+  if(!model) return null;
+  const site = SITE_MULT[q.site];
+
+  if(model.linearOnly){
+    const hm = heightBandMult(model, q.heightM);
+    let rate, unit, buildup;
+    if(model.costPerM3){
+      rate = Math.round(model.costPerM3 * hm * site.labour);
+      unit = 'm³';
+      buildup = [
+        { label:'Base cost per m³', value: model.costPerM3 },
+        { label:'Height band multiplier', value: model.costPerM3 * (hm - 1) },
+        { label:'Labour ('+site.label+')', value: model.costPerM3 * hm * (site.labour - 1) }
+      ];
+    } else {
+      rate = Math.round(model.costPerUnit * hm * site.labour);
+      unit = 'nos';
+      buildup = [
+        { label:'Base cost per unit', value: model.costPerUnit },
+        { label:'Height band multiplier', value: model.costPerUnit * (hm - 1) },
+        { label:'Labour ('+site.label+')', value: model.costPerUnit * hm * (site.labour - 1) }
+      ];
     }
+    return { rate, unit, buildup };
   }
-  if(state.tension){
-    for(let k=0;k<2;k++){const y=topY+hPx*(k===0?0:1); s+=`<line x1="${padL}" y1="${y}" x2="${padL+plotW}" y2="${y}" stroke="#2a7a55" stroke-width="1.2" stroke-dasharray="2 3"/>`;}
-  }
-  if(state.gate){
-    const gw=Math.min(gateW*scaleX,plotW*0.4);
-    const gx1=padL+plotW-gw, gx2=padL+plotW;
-    s+=`<rect x="${gx1}" y="${topY+6}" width="${gw}" height="${hPx-6}" fill="none" stroke="#5a6b62" stroke-width="3"/>`;
-    s+=`<line x1="${gx1}" y1="${groundY}" x2="${gx2}" y2="${topY+6}" stroke="#5a6b62" stroke-width="1.6"/>`;
-    s+=`<text x="${(gx1+gx2)/2}" y="${topY-4}" font-size="10" fill="#5a6b62" text-anchor="middle">Gate ${gateW.toFixed(1)} m</text>`;
-  }
-  posts.forEach((x,i)=>{
-    const isEnd=(i===0||i===posts.length-1);
-    const col=isEnd?'#0f4d36':'#1d6b4f';
-    const pw=isEnd?8:6;
-    s+=`<rect x="${x-pw/2}" y="${topY-4}" width="${pw}" height="${hPx+4}" fill="${col}" rx="1"/>`;
-    s+=`<line x1="${x}" y1="${groundY}" x2="${x}" y2="${groundY+14}" stroke="${col}" stroke-width="2" stroke-dasharray="2 2"/>`;
-  });
-  if(state.cctv){
-    [Math.floor(posts.length*0.25),Math.floor(posts.length*0.75)].forEach(pi=>{
-      const x=posts[pi]; if(x===undefined)return;
-      s+=`<rect x="${x-6}" y="${topY-16}" width="12" height="8" fill="#1c5d8c" rx="1"/>`;
-      s+=`<circle cx="${x}" cy="${topY-12}" r="2" fill="#eaf3fa"/>`;
-      s+=`<line x1="${x}" y1="${topY-8}" x2="${x}" y2="${topY-4}" stroke="#1c5d8c" stroke-width="1.5"/>`;
-    });
-  }
-  if(state.lighting){
-    const pi=Math.floor(posts.length*0.5); const x=posts[pi];
-    if(x!==undefined)s+=`<circle cx="${x}" cy="${topY-14}" r="4" fill="#f1c34a" stroke="#a97a12"/>`;
-  }
-  const barLen=Math.min(5,Math.ceil(runLen/6));
-  const barPx=barLen*scaleX;
-  s+=`<line x1="${padL}" y1="${H-18}" x2="${padL+barPx}" y2="${H-18}" stroke="#18312b" stroke-width="2"/>`;
-  s+=`<line x1="${padL}" y1="${H-22}" x2="${padL}" y2="${H-14}" stroke="#18312b" stroke-width="2"/>`;
-  s+=`<line x1="${padL+barPx}" y1="${H-22}" x2="${padL+barPx}" y2="${H-14}" stroke="#18312b" stroke-width="2"/>`;
-  s+=`<text x="${padL+barPx+6}" y="${H-14}" font-size="10" fill="#18312b">${barLen} m</text>`;
-  s+=`<text x="${W/2}" y="${H-4}" font-size="10" fill="#64756d" text-anchor="middle">Elevation — run ${runLen} m, posts @ ${spacing.toFixed(1)} m</text>`;
-  svg.innerHTML=s;
+
+  const hm = heightBandMult(model, q.heightM);
+  const postsPerSqFt = model.postsPerFt / (q.heightM * 3.28084);
+  const postCost = postsPerSqFt * model.postCost * hm;
+  const footingCost = postsPerSqFt * model.footingPerPost * site.foundation;
+  const meshCost = model.meshPerSqFt * hm;
+  const fittingsCost = model.fittingsPerSqFt * hm;
+  const labourCost = model.labourPerSqFt * site.labour;
+  const rate = Math.round(postCost + footingCost + meshCost + fittingsCost + labourCost);
+  return { rate, unit:'sq ft', buildup:[
+    { label:'Mesh (per sq ft)', value: meshCost },
+    { label:'Posts', value: postCost },
+    { label:'Footings ('+site.label+')', value: footingCost },
+    { label:'Fittings & hardware', value: fittingsCost },
+    { label:'Labour ('+site.label+' site)', value: labourCost }
+  ]};
 }
 
-/* ================================================================
-   CSV export
-================================================================ */
-function bomToCSV(){
-  const lines=[['Tier','Category','Item','Specification','Qty','Unit','Unit price','Line total','Range low','Range high','Currency']];
-  const cur=$('#currency').value;
-  [['Tier 1 · Structural','#bomT1'],['Tier 2 · Consumables','#bomT2'],['Tier 3 · Systems','#bomT3'],['Tier 4 · Civil','#bomT4']].forEach(([tierName,sel])=>{
-    const rows=document.querySelectorAll(sel+' tbody tr');
-    let cat='';
-    rows.forEach(tr=>{
-      if(tr.classList.contains('cat')){cat=tr.querySelector('td')?.textContent?.trim()||'';return;}
-      const tds=[...tr.querySelectorAll('td')];
-      if(tds.length<6)return;
-      const item=tds[0].textContent.trim();
-      const spec=tds[1].textContent.trim();
-      const qty=tds[2].textContent.trim();
-      const unit=tds[3].textContent.trim();
-      const pi=tr.querySelector('input.rate');
-      const price=pi?pi.value:'';
-      const range=getRange(item);
-      const total=(parseFloat(qty||0)*parseFloat(price||0)).toFixed(2);
-      lines.push([tierName,cat,item,spec,qty,unit,price,total,range?range.low:'',range?range.high:'',cur]);
-    });
-  });
-  return lines.map(r=>r.map(v=>{
-    const s=String(v).replace(/"/g,'""');
-    return /[",\n]/.test(s)?`"${s}"`:s;
-  }).join(',')).join('\r\n');
+function currentQty(){
+  const q = app.quote; if(!q.product) return 0;
+  const p = getProduct(q.product);
+  if(p.unit==='running_ft') return q.lengthFt;
+  if(p.unit==='sq_ft') return q.areaSqFt;
+  if(p.unit==='cubic_m') return q.volumeM3;
+  if(p.unit==='nos') return q.quantity;
+  return 0;
 }
-function downloadCSV(){
-  const csv=bomToCSV();
-  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  const stamp=new Date().toISOString().slice(0,10);
-  a.href=url;a.download=`fence-bom-${stamp}.csv`;
-  document.body.appendChild(a);a.click();document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+function currentQtyLabel(){
+  const q = app.quote; if(!q.product) return '';
+  const p = getProduct(q.product), n = currentQty();
+  if(p.unit==='running_ft') return `${n} running ft`;
+  if(p.unit==='sq_ft') return `${n} sq ft`;
+  if(p.unit==='cubic_m') return `${n} m³`;
+  if(p.unit==='nos') return `${n} nos`;
+  return '';
+}
+function currentRate(){
+  const d = deriveRate(); if(!d) return 0;
+  return app.quote.overrideRate !== null ? app.quote.overrideRate : d.rate;
+}
+function computeTotals(){
+  const qty = currentQty(), rate = currentRate();
+  const subtotal = qty * rate;
+  const gst = subtotal * BRAND.gstPct / 100;
+  const total = subtotal + gst;
+  return { qty, rate, subtotal, gst, total };
+}
+function areaLine(){
+  const q = app.quote; if(!q.product) return '';
+  const p = getProduct(q.product);
+  if(currentQty() <= 0) return 'Enter dimensions to see total';
+  if(p.unit==='sq_ft'){
+    return `${q.lengthFt} ft × ${q.heightM.toFixed(2)} m = <strong style="color:#fff">${q.areaSqFt} sq ft</strong>`;
+  }
+  return currentQtyLabel();
 }
 
-/* ================================================================
-   Events
-================================================================ */
-document.addEventListener('change',e=>{
-  if(e.target.matches('select,input')&&!e.target.matches('.rate')&&e.target.id!=='currency') update();
-});
-document.addEventListener('input',e=>{
-  if(e.target.matches('input[type=number]')&&!e.target.matches('.rate')) update();
-});
-// Rate input — update override, line total, totals
-document.addEventListener('input',e=>{
-  if(e.target.matches('input.rate')){
-    const key=e.target.dataset.key;
-    const val=parseFloat(e.target.value);
-    if(isNaN(val))return;
-    priceOverrides[key]=val;
-    const tr=e.target.closest('tr');
-    const qty=parseFloat(tr.querySelectorAll('td')[2].textContent)||0;
-    const total=round(qty*val,2);
-    const totalCell=tr.querySelector('td.total');
-    if(totalCell) totalCell.textContent=fmtMoney(total);
-    tr.classList.add('overridden');
-    // Recalc summary only
-    const state=gatherState();
-    const bom=generateBOM(state);
-    renderPricing(bom);
-  }
-});
-$('#currency').addEventListener('change',()=>update());
-$('#taxPct').addEventListener('input',()=>update());
-$('#printBtn').addEventListener('click',()=>window.print());
-$('#copyBtn').addEventListener('click',async()=>{
-  const text=$('#jsonOut').textContent;
-  try{
-    await navigator.clipboard.writeText(text);
-    const b=$('#copyBtn');b.textContent='Copied!';
-    setTimeout(()=>{b.textContent='Copy JSON';},1600);
-  }catch(e){
-    const range=document.createRange();range.selectNodeContents($('#jsonOut'));const sel=window.getSelection();sel.removeAllRanges();sel.addRange(range);
-    $('#jsonOut').style.display='block';$('#copyBtn').textContent='Select text above';
-  }
-});
-$('#csvBtn').addEventListener('click',()=>{
-  downloadCSV();
-  const b=$('#csvBtn');b.textContent='Downloaded!';
-  setTimeout(()=>{b.textContent='CSV';},1600);
-});
-$('#clearOverrides').addEventListener('click',()=>{priceOverrides={};update();});
-$('#resetBtn').addEventListener('click',()=>{
-  $$('.comp [data-toggle]').forEach(el=>{el.checked=el.dataset.defaultChecked==='true';});
-  $('#purpose').selectedIndex=0;$('#style').selectedIndex=0;$('#height').value='1.5 m';
-  $('#runLength').value='30';
-  $('#terrain').selectedIndex=0;$('#environment').selectedIndex=0;$('#finish').selectedIndex=0;
-  $('#civilToggle').value='no';
-  $('#wastePct').value=5;$('#wastePct2').value=10;$('#wastePct3').value=5;$('#wastePct4').value=5;
-  $('#taxPct').value=18;$('#currency').value='INR';
-  priceOverrides={};
-  update();
-});
-update();
+function renderBuildup(){
+  const derived = deriveRate();
+  const rows = document.getElementById('buildupRows');
+  const title = document.getElementById('buildupTitle');
+  if(!derived || !rows) return;
+  const q = app.quote;
+  const isOverride = q.overrideRate !== null;
+  const factor = isOverride ? (q.overrideRate / derived.rate) : 1;
+  title.innerHTML = isOverride
+    ? `Rate build-up <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#8a5a1c">(scaled ×${factor.toFixed(3)})</span>`
+    : 'Rate build-up';
+  const finalRows = derived.buildup.map(b => {
+    const v = isOverride ? b.value * factor : b.value;
+    const tag = isOverride ? `<span class="b-mult">×${factor.toFixed(2)}</span>` : '';
+    return `<div class="buildup-row"><span class="b-label">${b.label}${tag}</span><span class="b-val">₹${Math.round(v).toLocaleString('en-IN')}</span></div>`;
+  }).join('');
+  const total = derived.buildup.reduce((s,b) => s + (isOverride ? b.value*factor : b.value), 0);
+  rows.innerHTML = finalRows + `<div class="buildup-row total"><span>Total per ${derived.unit}</span><span>₹${Math.round(total).toLocaleString('en-IN')}</span></div>`;
+}
+
+function openOverrideEditor(){
+  const derived = deriveRate();
+  if(!derived) return;
+  const editor = document.getElementById('overrideEditor');
+  editor.classList.add('open');
+  const input = document.getElementById('overrideInput');
+  input.value = app.quote.overrideRate !== null ? app.quote.overrideRate : derived.rate;
+  document.getElementById('overrideHint').innerHTML =
+    `Derived rate: <strong>${fmtINR(derived.rate)} / ${derived.unit}</strong><br>Enter a new rate — components will scale proportionally.`;
+  input.focus(); input.select();
+}
+
+function applyOverride(){
+  const derived = deriveRate(); if(!derived) return;
+  const v = parseFloat(document.getElementById('overrideInput').value);
+  if(isNaN(v) || v <= 0){ toast('Enter a valid rate'); return; }
+  if(Math.abs(v - derived.rate) < 0.5){ app.quote.overrideRate = null; toast('No change — reset'); }
+  else { app.quote.overrideRate = v; toast(`Override: ₹${v} / ${derived.unit}`); }
+  render();
+}
+
+/* ============================================================
+   WhatsApp + Print
+   ============================================================ */
+function buildMessage(){
+  const q = app.quote;
+  const p = getProduct(q.product);
+  const t = computeTotals();
+  const derived = deriveRate();
+  const cust = (document.getElementById('custName')?.value || '').trim();
+  const L = [];
+  L.push(`*JustFence Quotation*`);
+  L.push('');
+  if(cust) L.push(`For: ${cust}`);
+  L.push(`*${p.name}*`);
+  if(p.unit==='sq_ft') L.push(`${q.lengthFt} ft × ${q.heightM.toFixed(2)} m = ${q.areaSqFt} sq ft`);
+  else if(p.unit==='running_ft') L.push(`${q.lengthFt} running ft`);
+  else if(p.unit==='cubic_m') L.push(`${q.volumeM3} m³`);
+  else if(p.unit==='nos') L.push(`${q.quantity} nos`);
+  L.push(`Rate: ₹${t.rate.toLocaleString('en-IN')} / ${UNIT_LABEL[p.unit]}`);
+  if(q.overrideRate !== null) L.push(`(Adjusted from standard ₹${derived.rate.toLocaleString('en-IN')} for site conditions)`);
+  L.push('');
+  L.push(`Subtotal: ${fmtINR(t.subtotal)}`);
+  L.push(`GST ${BRAND.gstPct}%: ${fmtINR(t.gst)}`);
+  L.push(`*Total: ${fmtINR(t.total)}*`);
+  L.push('');
+  L.push(`Valid ${BRAND.validityDays} days. ${BRAND.advanceText}.`);
+  L.push(`Call ${BRAND.phone}`);
+  L.push(BRAND.website);
+  return L.join('\n');
+}
+function shareWhatsApp(){ window.open('https://wa.me/?text=' + encodeURIComponent(buildMessage()), '_blank'); }
+
+function buildPrintSheet(){
+  const q = app.quote;
+  const p = getProduct(q.product);
+  const t = computeTotals();
+  const derived = deriveRate();
+  const today = new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+  const cust = (document.getElementById('custName')?.value || '').trim() || '—';
+  let qtyLine='';
+  if(p.unit==='sq_ft') qtyLine = `${q.lengthFt} ft × ${q.heightM.toFixed(2)} m = ${q.areaSqFt} sq ft`;
+  else if(p.unit==='running_ft') qtyLine = `${q.lengthFt} running ft`;
+  else if(p.unit==='cubic_m') qtyLine = `${q.volumeM3} m³`;
+  else if(p.unit==='nos') qtyLine = `${q.quantity} nos`;
+
+  const isOverride = q.overrideRate !== null;
+  const factor = isOverride ? (q.overrideRate / derived.rate) : 1;
+  let buildupHtml = `<div class="ps-buildup"><div style="font-weight:800;margin-bottom:6px">Rate build-up per ${derived.unit}${isOverride?' (scaled ×'+factor.toFixed(3)+')':''}</div>`;
+  derived.buildup.forEach(b => {
+    const v = isOverride ? b.value * factor : b.value;
+    buildupHtml += `<div class="pr"><span>${b.label}</span><span>₹${Math.round(v).toLocaleString('en-IN')}</span></div>`;
+  });
+  buildupHtml += `<div class="pr tot"><span>Total</span><span>₹${fmtINR(t.rate)}</span></div></div>`;
+
+  const overrideNote = isOverride
+    ? `<div style="background:#fdf6e8;border:1px solid #e8d4a8;border-radius:6px;padding:8px 10px;margin:10px 0;font-size:11px;color:#8a5a1c">
+         <strong>Rate adjusted for site conditions</strong><br>
+         Standard: ${fmtINR(derived.rate)} / ${derived.unit} · Quoted: ${fmtINR(q.overrideRate)} / ${derived.unit}
+       </div>` : '';
+
+  document.getElementById('printSheet').innerHTML = `
+    <div class="ps-head">
+      <div><div class="ps-logo">JustFence</div><div class="ps-tag">Fencing solutions · Bangalore</div></div>
+      <div class="ps-meta">Date: ${today}<br>Valid: ${BRAND.validityDays} days<br>GST: ${BRAND.gstPct}%</div>
+    </div>
+    <div class="ps-cust"><strong>Customer:</strong> ${cust} &nbsp;·&nbsp; <strong>Site:</strong> ${SITE_MULT[q.site].label}</div>
+    <table>
+      <thead><tr><th>Item</th><th class="r">Qty</th><th class="r">Rate</th><th class="r">Amount</th></tr></thead>
+      <tbody>
+        <tr><td><strong>${p.name}</strong><br><span style="color:#64756d;font-size:11px">${qtyLine}</span></td>
+        <td class="r">${currentQtyLabel()}</td><td class="r">${fmtINR(t.rate)}</td><td class="r">${fmtINR(t.subtotal)}</td></tr>
+        <tr><td colspan="3" class="r">Subtotal</td><td class="r">${fmtINR(t.subtotal)}</td></tr>
+        <tr><td colspan="3" class="r">GST ${BRAND.gstPct}%</td><td class="r">${fmtINR(t.gst)}</td></tr>
+        <tr class="ps-total"><td colspan="3" class="r">TOTAL</td><td class="r">${fmtINR(t.total)}</td></tr>
+      </tbody>
+    </table>
+    ${overrideNote}
+    ${buildupHtml}
+    <div class="ps-foot">
+      ${BRAND.advanceText} with order. Valid ${BRAND.validityDays} days.<br>
+      Call ${BRAND.phone} · ${BRAND.email} · ${BRAND.website}<br>
+      <span style="color:#94a39a;font-size:10px">Indicative quotation. Final scope and price confirmed after site verification.</span>
+    </div>
+  `;
+}
+
+/* ============================================================
+   Intro modal
+   ============================================================ */
+(function(){
+  const modal = document.getElementById('introModal');
+  const closeBtn = document.getElementById('introClose');
+  const dismissBtn = document.getElementById('introDismiss');
+  const openBtn = document.getElementById('introBtn');
+  const KEY = 'jf_intro_seen_v2';
+  function open(){ modal.classList.add('open'); document.body.style.overflow = 'hidden'; }
+  function close(){ modal.classList.remove('open'); document.body.style.overflow = ''; try{localStorage.setItem(KEY,'1');}catch(e){} }
+  let seen = false; try{ seen = localStorage.getItem(KEY)==='1'; }catch(e){}
+  if(!seen) open();
+  openBtn.addEventListener('click', open);
+  closeBtn.addEventListener('click', close);
+  dismissBtn.addEventListener('click', close);
+  modal.addEventListener('click', e => { if(e.target === modal) close(); });
+  document.addEventListener('keydown', e => { if(e.key==='Escape' && modal.classList.contains('open')) close(); });
+})();
+
+/* ============================================================
+   Init
+   ============================================================ */
+setScreen('landing');
 </script>
 </body>
 </html>
